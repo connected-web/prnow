@@ -9,11 +9,11 @@ async function findTicketFromBranchName ({ ticket, ticketTitle, cwd }) {
   const branchName = !stderr ? stdout : false
   const possibleTicket = branchName.split('/')[0]
 
-  if (branchName === 'master') {
+  if (branchName === 'main') {
     if (ticket) {
       report('Using the provided ticket:', ticket, 'as the ticket reference')
     } else {
-      throw new Error('No ticket id provided, and git is currently on master. Please provide more information to prnow, such as a ticket ID, or a commit message.')
+      throw new Error('No ticket id provided, and git is currently on main. Please provide more information to prnow, such as a ticket ID, or a commit message.')
     }
   } else {
     if (ticket === possibleTicket) {

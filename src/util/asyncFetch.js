@@ -3,7 +3,7 @@ const https = require('https')
 
 async function fetch ({ url, certFilePath, apiKey }) {
   const urlopts = new URL(url)
-  const options = {
+  let options = {
     hostname: urlopts.hostname,
     path: urlopts.pathname,
     method: urlopts.method,
@@ -15,13 +15,13 @@ async function fetch ({ url, certFilePath, apiKey }) {
   if (certFilePath) {
     options = Object.assign(options, {
       key: fs.readFileSync(certFilePath),
-      cert: fs.readFileSync(certFilePath),
+      cert: fs.readFileSync(certFilePath)
     })
   }
 
   if (apiKey) {
     options.headers = Object.assign(options.headers, {
-      'Authorization': `Basic ${apiKey}`
+      Authorization: `Basic ${apiKey}`
     })
   }
 
