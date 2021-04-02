@@ -1,0 +1,32 @@
+{
+  "name": "prnow",
+  "version": "1.0.0",
+  "description": "Command line tool to create a PR now - minimal fuss - automated commit, push, and PR using hub",
+  "main": "src/prnow.js",
+  "scripts": {
+    "test": "standard",
+    "lint": "standard --fix"
+  },
+  "bin": {
+    "prnow": "cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/connected-web/prnow.git"
+  },
+  "files": [
+    "cli.js",
+    "src",
+    "README.md"
+  ],
+  "keywords": [],
+  "author": "Connected Web",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/connected-web/prnow/issues"
+  },
+  "homepage": "https://github.com/connected-web/prnow#readme",
+  "devDependencies": {
+    "standard": "^14.3.3"
+  }
+}
