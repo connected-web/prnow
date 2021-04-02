@@ -16,7 +16,7 @@ PR Now is a command line tool that automates a streamlined workflow for making p
 - `hub > 2.14.x` installed : https://hub.github.com/
 - `git > 2.x` installed : https://git-scm.com/downloads
 - `GITHUB_TOKEN` set on your environment to a developer key for `hub`
-- `PRNOW_JIRA_BASE_URL` set on your environment to integrate with Jira
+- `PRNOW_JIRA_BASE_URL` set on your environment to integrate with Jira e.g. `https://connected-web.atlassian.net`
 - `PRNOW_JIRA_API_KEY` set on your environment to use an API key with Jira
 - `PRNOW_JIRA_CLIENT_KEY` set on your environment to point a private key PEM for use with Jira
 - A project checked out from `github` : https://github.com/
