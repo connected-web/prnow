@@ -14,13 +14,13 @@ async function createAGithubPR ({ ticket, ticketTitle, ticketUrl, cwd }) {
     .map(m => `-m "${m}"`).join(' ')
 
   try {
-    const draftHubPR = await exec(`hub pull-request -f --no-edit --draft ${messages}`, { cwd })
+    const draftHubPR = await exec(`hub pull-request -b main -f --no-edit --draft ${messages}`, { cwd })
     report('Hub:', draftHubPR.stdout, draftHubPR.stderr)
   } catch (ex) {
     if (/A pull request already exists/.test(ex.message)) {
       report(ex.message)
     } else if (/Draft pull requests are not supported in this repository/.test(ex.message)) {
-      const normalHubPR = await exec(`hub pull-request -f --no-edit ${messages}`, { cwd })
+      const normalHubPR = await exec(`hub pull-request -b main -f --no-edit ${messages}`, { cwd })
       report('Hub:', normalHubPR.stdout, normalHubPR.stderr)
     } else {
       throw ex
