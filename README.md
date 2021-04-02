@@ -4,7 +4,7 @@ Command line tool to create a PR now - minimal fuss - automated commit, push, an
 
 Taking the effort out of making pull requests, by linking together branch names, PR titles, and tickets by running one simple command.
 
-![Photo of broken glass reflecting light on the road](./images/prnow.jpg)
+![Photo of broken glass reflecting light on the road](./images/prnow-background.jpg)
 
 ## So what is PR Now?
 
