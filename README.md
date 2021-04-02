@@ -29,7 +29,7 @@ PR Now will attempt to:
 - Try to find an issue from github based on the supplied ID and extract its title
 - Try and find a Jira ticket based on the supplied ID and extract its title
 - Create and checkout a branch based on the ticket ID
-- Commit any unstaged files with the equivalent message "TICK-24 Title of ticket"
+- Commit any unstaged files with the equivalent message "TICKET-24 Title of ticket"
 - Push any changes to the remote branch; creating the remote branch if necessary
 - Use `hub` to create a PR in github with a title, and a link to the ticket in the description
 - Use `hub` to open a browser with the new PR so you can review and share with friends
@@ -130,7 +130,7 @@ This would:
 ### Example 4
 
 ```
-On branch TVPX-123/a-recently-merged-feature
+On branch WORKOP-123/a-recently-merged-feature
 prnow reset
 ```
 
