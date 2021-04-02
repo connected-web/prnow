@@ -1,4 +1,4 @@
-const { resetGitToMaster } = require('../steps/_index')
+const { resetGitToMain } = require('../steps/_index')
 
 const resetMode = {
   name: 'Reset it Already!',
@@ -9,7 +9,7 @@ const resetMode = {
     return workingKnowledge
   },
   steps: {
-    'Reset to Master': resetGitToMaster
+    'Reset to main': resetGitToMain
   }
 }
 

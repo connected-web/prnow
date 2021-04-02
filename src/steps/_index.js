@@ -9,7 +9,7 @@ const steps = [
   'pushToRemote',
   'createAGithubPR',
   'showPRInBrowser',
-  'resetGitToMaster'
+  'resetGitToMain'
 ]
 
 module.exports = steps.reduce((acc, stepName) => {
