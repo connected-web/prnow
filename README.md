@@ -80,6 +80,33 @@ Then run `source ~/.profile` or restart your console.
 
 You should then be able to use `prnow` from anywhere on the command line.
 
+## Jira Integration Setup
+
+From Jira's [basic-auth-for-rest-apis](https://developer.atlassian.com/cloud/jira/platform/basic-auth-for-rest-apis/#supply-basic-auth-headers):
+
+>1. Generate an API token for Jira using your Atlassian Account.
+>2. Build a string of the form useremail:api_token.
+>3. BASE64 encode the string.
+>    - `echo -n user@example.com:api_token_string | base64`
+>4. Supply an Authorization header with content Basic followed by the encoded string.
+
+To supply the authorization token, set: `PRNOW_JIRA_API_TOKEN` on your env; for example by editing `~/.profile` and reloading your terminal.
+
+Also, you'll need to specify which Jira instance you are connected to.
+
+To make this work set:
+- `PRNOW_JIRA_BASE_URL` e.g. for testing this project uses `https://connected-web.atlassian.net`
+
+Example `~/.profile` changes:
+
+```
+export PRNOW_JIRA_BASE_URL="https://connected-web.atlassian.net"
+export PRNOW_JIRA_API_TOKEN="XYZabc123=="
+alias prnow="npx github:connected-web/prnow"
+```
+
+There is currently no way to set up multiple access tokens based on project - if this is of interest to you; please raise an issue. One solution might be to makhee separate aliases for t command - setting the appropriate environment variables just prior to command execution.
+
 ## Examples
 
 ### Example 1
