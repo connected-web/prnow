@@ -3,7 +3,7 @@ const createBranchNameSlug = require('../util/createBranchNameSlug')
 const report = (...messages) => console.log('[PR Now] [Create Branch]', ...messages)
 
 async function createBranch (workingKnowledge) {
-  let { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
+  const { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Create a branch equivalent to the ticket name
 
   const currentBranchName = (await exec('git branch', { cwd })).stdout.split('\n').filter(n => /\* /.test(n))[0].substr(2)

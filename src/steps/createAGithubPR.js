@@ -3,7 +3,7 @@ const dedupe = require('../util/dedupe')
 const report = (...messages) => console.log('[PR Now] [Create a Github PR]', ...messages)
 
 async function createAGithubPR (workingKnowledge) {
-  let { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName } = workingKnowledge
+  const { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName } = workingKnowledge
   // - Use `hub` to create a PR in github with a title, and a link to the ticket in the description
 
   const messages = [
