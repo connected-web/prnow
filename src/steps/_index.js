@@ -1,5 +1,6 @@
 const steps = [
   'createTitleFromArguments',
+  'findDefaultBranch',
   'findTicketFromBranchName',
   'findGithubIssue',
   'findJiraTicket',
@@ -9,7 +10,7 @@ const steps = [
   'pushToRemote',
   'createAGithubPR',
   'showPRInBrowser',
-  'resetGitToMain'
+  'resetGitToDefaultBranch'
 ]
 
 module.exports = steps.reduce((acc, stepName) => {

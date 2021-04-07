@@ -61,7 +61,7 @@ Create a PR using a commit message:
 prnow "Update the README"
 ```
 
-To reset to main and pull any changes from the remote:
+To reset to default branch and pull any changes from the remote:
 ```
 prnow reset
 ```
@@ -148,7 +148,7 @@ This would:
 ### Example 3
 
 ``` 
-On main.
+On default branch:
 prnow Update the README
 ```
 
@@ -168,5 +168,5 @@ prnow reset
 ```
 
 This would:
-- Checkout the local main branch
+- Checkout the local default branch
 - Pull and rebase any changes to update your local repository

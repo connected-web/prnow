@@ -1,4 +1,4 @@
-const { resetGitToMain } = require('../steps/_index')
+const { resetGitToDefaultBranch, findDefaultBranch } = require('../steps/_index')
 
 const resetMode = {
   name: 'Reset it Already!',
@@ -9,7 +9,8 @@ const resetMode = {
     return workingKnowledge
   },
   steps: {
-    'Reset to main': resetGitToMain
+    'Find default branch': findDefaultBranch,
+    'Reset to default branch': resetGitToDefaultBranch
   }
 }
 

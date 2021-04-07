@@ -1,5 +1,6 @@
 const steps = require('../steps/_index')
 const {
+  findDefaultBranch,
   createTitleFromArguments, findTicketFromBranchName,
   findGithubIssue, findJiraTicket,
   applyDefaultsIfNeeded, createBranch, commitUnstagedFiles,
@@ -17,6 +18,7 @@ const defaultMode = {
     return workingKnowledge
   },
   steps: {
+    'Find default branch': findDefaultBranch,
     'Create Title from Arguments': createTitleFromArguments,
     'Find Ticket from Branch Name': findTicketFromBranchName,
     'Find Github Issue': findGithubIssue,

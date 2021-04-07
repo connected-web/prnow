@@ -2,12 +2,11 @@ const fetch = require('../util/asyncFetch')
 const createBranchNameSlug = require('../util/createBranchNameSlug')
 const report = (...messages) => console.log('[PR Now] [Find Jira Ticket]', ...messages)
 
-function tryParse(body) {
+function tryParse (body) {
   let result = {}
   try {
     result = JSON.parse(body)
-  }
-  catch (ex) {
+  } catch (ex) {
     report('Unable to parse', body, ex.message)
   }
   return result

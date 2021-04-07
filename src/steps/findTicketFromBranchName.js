@@ -1,7 +1,7 @@
 const exec = require('../util/asyncExec')
 const report = (...messages) => console.log('[PR Now] [Find Branch Name]', ...messages)
 
-async function findTicketFromBranchName ({ ticket, ticketTitle, cwd }) {
+async function findTicketFromBranchName ({ ticket, ticketTitle, defaultBranchName, cwd }) {
   // - Find branch name using `git rev-parse --abbrev-ref HEAD`, then use that as the ticket reference
 
   const { stdout, stderr } = await exec('git rev-parse --abbrev-ref HEAD', { cwd })
@@ -9,11 +9,11 @@ async function findTicketFromBranchName ({ ticket, ticketTitle, cwd }) {
   const branchName = !stderr ? stdout : false
   const possibleTicket = branchName.split('/')[0]
 
-  if (branchName === 'main') {
+  if (branchName === defaultBranchName) {
     if (ticket) {
       report('Using the provided ticket:', ticket, 'as the ticket reference')
     } else {
-      throw new Error('No ticket id provided, and git is currently on main. Please provide more information to prnow, such as a ticket ID, or a commit message.')
+      throw new Error(`No ticket id provided, and git is currently on ${defaultBranchName}. Please provide more information to prnow, such as a ticket ID, or a commit message.`)
     }
   } else {
     if (ticket === possibleTicket) {
