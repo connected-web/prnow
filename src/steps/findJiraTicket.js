@@ -12,7 +12,8 @@ function tryParse (body) {
   return result
 }
 
-async function findJiraTicket ({ ticket, branchName, ticketTitle, ticketUrl, cwd }) {
+async function findJiraTicket (workingKnowledge) {
+  let { ticket, branchName, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Find *TICK-24* to see if there is a matching ticket to extract a title for a PR
   if (!ticket) {
     throw new Error(`No ticket reference found (${ticket}); prnow needs a reference to create a branch name`)
@@ -46,13 +47,13 @@ async function findJiraTicket ({ ticket, branchName, ticketTitle, ticketUrl, cwd
     }
   }
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     ticket,
     branchName,
     ticketTitle,
     ticketUrl,
     cwd
-  }
+  })
 }
 
 module.exports = findJiraTicket

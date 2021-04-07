@@ -1,6 +1,7 @@
 const report = (...messages) => console.log('[PR Now] [Create Title from Arguments]', ...messages)
 
-async function createTitleFromArguments ({ ticket, args, cwd }) {
+async function createTitleFromArguments (workingKnowledge) {
+  let { ticket, args, cwd } = workingKnowledge
   args = args || []
 
   let ticketTitle
@@ -17,11 +18,11 @@ async function createTitleFromArguments ({ ticket, args, cwd }) {
     report('Using:', `"${ticket}"`, 'as the ticket reference, and', `"${ticketTitle}"`, 'as the title')
   }
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     ticket,
     ticketTitle,
     cwd
-  }
+  })
 }
 
 module.exports = createTitleFromArguments

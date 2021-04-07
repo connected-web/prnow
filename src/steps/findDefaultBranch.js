@@ -1,7 +1,8 @@
 const exec = require('../util/asyncExec')
 const report = (...messages) => console.log('[PR Now] [Find Default Branch]', ...messages)
 
-async function findDefaultBranch ({ ticket, ticketTitle, ticketUrl, cwd }) {
+async function findDefaultBranch (workingKnowledge) {
+  let { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Find the default branch for this repo
 
   let defaultBranchName = 'main'
@@ -14,13 +15,13 @@ async function findDefaultBranch ({ ticket, ticketTitle, ticketUrl, cwd }) {
     report('Unable to discern default branch name from origin:', ex.message)
   }
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     ticket,
     ticketTitle,
     ticketUrl,
     defaultBranchName,
     cwd
-  }
+  })
 }
 
 module.exports = findDefaultBranch

@@ -1,7 +1,8 @@
 const exec = require('../util/asyncExec')
 const report = (...messages) => console.log('[PR Now] [Reset to default branch]', ...messages)
 
-async function resetGitToDefaultBranch ({ cwd, defaultBranchName }) {
+async function resetGitToDefaultBranch (workingKnowledge) {
+  let { cwd, defaultBranchName } = workingKnowledge
   // Checkout default branch, then pull and rebase
 
   const gitCheckoutDefault = await exec(`git checkout ${defaultBranchName}`, { cwd })
@@ -10,9 +11,9 @@ async function resetGitToDefaultBranch ({ cwd, defaultBranchName }) {
   const gitPullAndRebase = await exec('git pull -r', { cwd })
   report('git pull:', gitPullAndRebase.stdout, gitPullAndRebase.stderr)
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     cwd
-  }
+  })
 }
 
 module.exports = resetGitToDefaultBranch

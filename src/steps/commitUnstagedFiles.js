@@ -2,7 +2,8 @@ const exec = require('../util/asyncExec')
 const dedupe = require('../util/dedupe')
 const report = (...messages) => console.log('[PR Now] [Commit Unstaged Files]', ...messages)
 
-async function commitUnstagedFiles ({ ticket, ticketTitle, ticketUrl, branchName, cwd }) {
+async function commitUnstagedFiles (workingKnowledge) {
+  let { ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
   // - Commit any unstaged files with the equivalent message "TICK-24 Title of ticket"
 
   const gitAdd = await exec('git add .', { cwd })
@@ -23,13 +24,13 @@ async function commitUnstagedFiles ({ ticket, ticketTitle, ticketUrl, branchName
     report('Unable to complete git commmit. Continuing...', ex.message)
   }
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     ticket,
     ticketTitle,
     ticketUrl,
     branchName,
     cwd
-  }
+  })
 }
 
 module.exports = commitUnstagedFiles

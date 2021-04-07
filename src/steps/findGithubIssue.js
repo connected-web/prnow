@@ -3,7 +3,8 @@ const report = (...messages) => console.log('[PR Now] [Find Github Issue]', ...m
 
 const isNumeric = require('../util/isNumeric')
 
-async function findGithubIssue ({ ticket, ticketTitle, cwd }) {
+async function findGithubIssue (workingKnowledge) {
+  let { ticket, ticketTitle, cwd } = workingKnowledge
   let issueTitle, issueUrl, ticketUrl
   const issueNumber = Number.parseInt((ticket + '').split('/')[0].replace('#', ''))
   if (isNumeric(issueNumber)) {
@@ -22,12 +23,12 @@ async function findGithubIssue ({ ticket, ticketTitle, cwd }) {
     }
   }
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     ticket,
     ticketTitle,
     ticketUrl,
     cwd
-  }
+  })
 }
 
 module.exports = findGithubIssue

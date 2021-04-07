@@ -2,7 +2,8 @@ const exec = require('../util/asyncExec')
 const dedupe = require('../util/dedupe')
 const report = (...messages) => console.log('[PR Now] [Create a Github PR]', ...messages)
 
-async function createAGithubPR ({ ticket, ticketTitle, ticketUrl, cwd, defaultBranchName }) {
+async function createAGithubPR (workingKnowledge) {
+  let { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName } = workingKnowledge
   // - Use `hub` to create a PR in github with a title, and a link to the ticket in the description
 
   const messages = [
@@ -27,10 +28,10 @@ async function createAGithubPR ({ ticket, ticketTitle, ticketUrl, cwd, defaultBr
     }
   }
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     ticket,
     cwd
-  }
+  })
 }
 
 module.exports = createAGithubPR

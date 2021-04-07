@@ -1,7 +1,8 @@
 const exec = require('../util/asyncExec')
 const report = (...messages) => console.log('[PR Now] [Find Branch Name]', ...messages)
 
-async function findTicketFromBranchName ({ ticket, ticketTitle, defaultBranchName, cwd }) {
+async function findTicketFromBranchName (workingKnowledge) {
+  let { ticket, ticketTitle, defaultBranchName, cwd } = workingKnowledge
   // - Find branch name using `git rev-parse --abbrev-ref HEAD`, then use that as the ticket reference
 
   const { stdout, stderr } = await exec('git rev-parse --abbrev-ref HEAD', { cwd })
@@ -24,11 +25,11 @@ async function findTicketFromBranchName ({ ticket, ticketTitle, defaultBranchNam
     }
   }
 
-  return {
+  return Object.assign({}, workingKnowledge, {
     ticket,
     ticketTitle,
     cwd
-  }
+  })
 }
 
 module.exports = findTicketFromBranchName
