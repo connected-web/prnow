@@ -2,7 +2,7 @@ const exec = require('../util/asyncExec')
 const report = (...messages) => console.log('[PR Now] [Push to Remote]', ...messages)
 
 async function pushToRemote (workingKnowledge) {
-  let workingKnowledge = { ticket, ticketTitle, ticketUrl, branchName, cwd }
+  const { ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
   try {
     const pushToRemote = await exec('git push', { cwd })
     report('git push:', pushToRemote.stdout, pushToRemote.stderr)

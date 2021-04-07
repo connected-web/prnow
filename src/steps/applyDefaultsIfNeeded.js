@@ -2,7 +2,7 @@ const report = (...messages) => console.log('[PR Now] [Apply Defaults if Needed]
 
 async function applyDefaultsIfNeeded (workingKnowledge) {
   let { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
-  
+
   // Apply a default title, and ticket url if not set by this point
   if (!ticket) {
     throw new Error(`No ticket reference found (${ticket}); prnow needs a reference to create a branch name`)
