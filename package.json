@@ -1,6 +1,6 @@
 {
   "name": "prnow",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Command line tool to create a PR now - minimal fuss - automated commit, push, and PR using hub",
   "main": "src/prnow.js",
   "scripts": {
