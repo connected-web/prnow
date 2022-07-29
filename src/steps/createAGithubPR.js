@@ -15,7 +15,7 @@ async function createAGithubPR (workingKnowledge) {
     .map(m => `-m "${m}"`).join(' ')
 
   try {
-    const draftHubPR = await exec(`hub pull-request -b ${defaultBranchName} -f --no-edit ${messages}`, { cwd })
+    const draftHubPR = await exec(`hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`, { cwd })
     report('Hub:', draftHubPR.stdout, draftHubPR.stderr)
   } catch (ex) {
     if (/A pull request already exists/.test(ex.message)) {
