@@ -12,9 +12,9 @@ PR Now is a command line tool that automates a streamlined workflow for making p
 
 ## Prereqsuites
 
-- `node js > 10.x` installed : https://nodejs.org/en/
-- `hub > 2.14.x` installed : https://hub.github.com/
-- `git > 2.x` installed : https://git-scm.com/downloads
+- `node js > 22` installed : https://nodejs.org/en/
+- `hub > 2.25.x` installed : https://hub.github.com/
+- `git > 2` installed : https://git-scm.com/downloads
 - A project checked out from `github` : https://github.com/
 
 ## Environment Variables
