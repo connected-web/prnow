@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 import * as index from './src/prnow'
 const report = (...messages: any[]) => console.log('[PR Now] [CLI]', ...messages)
 
