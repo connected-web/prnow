@@ -7,18 +7,24 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   branchName?: string
   cwd?: string
+  preview?: boolean
   [key: string]: any
 }
 
 export default async function pushToRemote (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
-  try {
-    const pushToRemote = await exec('git push', { cwd })
-    report('git push:', pushToRemote.stdout, pushToRemote.stderr)
-  } catch (ex: any) {
-    if (/no upstream branch/.test(ex.message)) {
-      const pushToUpstream = await exec(`git push --set-upstream origin "${branchName}"`, { cwd })
-      report('git push:', pushToUpstream.stdout, pushToUpstream.stderr)
+  const { ticket, ticketTitle, ticketUrl, branchName, cwd, preview } = workingKnowledge
+  if (preview) {
+    report(`[PREVIEW] Would run: git push`)
+    report(`[PREVIEW] Would run: git push --set-upstream origin "${branchName}" (if no upstream branch)`)
+  } else {
+    try {
+      const pushToRemote = await exec('git push', { cwd })
+      report('git push:', pushToRemote.stdout, pushToRemote.stderr)
+    } catch (ex: any) {
+      if (/no upstream branch/.test(ex.message)) {
+        const pushToUpstream = await exec(`git push --set-upstream origin "${branchName}"`, { cwd })
+        report('git push:', pushToUpstream.stdout, pushToUpstream.stderr)
+      }
     }
   }
 

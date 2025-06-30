@@ -8,11 +8,12 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   cwd?: string
   defaultBranchName?: string
+  preview?: boolean
   [key: string]: any
 }
 
 export default async function createAGithubPR (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName } = workingKnowledge
+  const { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName, preview } = workingKnowledge
   // - Use `hub` to create a PR in github with a title, and a link to the ticket in the description
 
   const messages = [
@@ -23,14 +24,18 @@ export default async function createAGithubPR (workingKnowledge: WorkingKnowledg
     .map(n => n.replace(/["]/g, '\\"'))
     .map(m => `-m "${m}"`).join(' ')
 
-  try {
-    const draftHubPR = await exec(`hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`, { cwd })
-    report('Hub:', draftHubPR.stdout, draftHubPR.stderr)
-  } catch (ex: any) {
-    if (/A pull request already exists/.test(ex.message)) {
-      report(ex.message)
-    } else {
-      throw ex
+  if (preview) {
+    report(`[PREVIEW] Would run: hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`)
+  } else {
+    try {
+      const draftHubPR = await exec(`hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`, { cwd })
+      report('Hub:', draftHubPR.stdout, draftHubPR.stderr)
+    } catch (ex: any) {
+      if (/A pull request already exists/.test(ex.message)) {
+        report(ex.message)
+      } else {
+        throw ex
+      }
     }
   }
 

@@ -5,12 +5,13 @@ export interface RunOptions {
   command: string
   args: string[]
   cwd: string
+  preview?: boolean
 }
 
-export async function run ({ command, args, cwd }: RunOptions): Promise<void> {
+export async function run ({ command, args, cwd, preview }: RunOptions): Promise<void> {
   const lcCommand = (command + '').toLowerCase()
   const mode = (modes as any)[lcCommand] || (modes as any).default
-  let workingKnowledge = mode.setup({ command, args, cwd })
+  let workingKnowledge = mode.setup({ command, args, cwd, preview })
 
   report(mode.name)
   for (const [, stepFn] of Object.entries(mode.steps)) {

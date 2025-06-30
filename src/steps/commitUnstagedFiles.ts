@@ -8,15 +8,13 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   branchName?: string
   cwd?: string
+  preview?: boolean
   [key: string]: any
 }
 
 export default async function commitUnstagedFiles (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
+  const { ticket, ticketTitle, ticketUrl, branchName, cwd, preview } = workingKnowledge
   // - Commit any unstaged files with the equivalent message "TICK-24 Title of ticket"
-
-  const gitAdd = await exec('git add .', { cwd })
-  report(gitAdd.stdout, gitAdd.stderr)
 
   const message = [
     dedupe(`${ticket} ${ticketTitle}`),
@@ -26,11 +24,18 @@ export default async function commitUnstagedFiles (workingKnowledge: WorkingKnow
     .map(n => n.replace(/["]/g, '\\"'))
     .join('\n')
 
-  try {
-    const gitCommit = await exec(`git commit -m "${message}"`)
-    report(gitCommit.stdout, gitCommit.stderr)
-  } catch (ex: any) {
-    report('Unable to complete git commmit. Continuing...', ex.message)
+  if (preview) {
+    report(`[PREVIEW] Would run: git add .`)
+    report(`[PREVIEW] Would run: git commit -m "${message}"`)
+  } else {
+    const gitAdd = await exec('git add .', { cwd })
+    report(gitAdd.stdout, gitAdd.stderr)
+    try {
+      const gitCommit = await exec(`git commit -m "${message}"`)
+      report(gitCommit.stdout, gitCommit.stderr)
+    } catch (ex: any) {
+      report('Unable to complete git commmit. Continuing...', ex.message)
+    }
   }
 
   return Object.assign({}, workingKnowledge, {
