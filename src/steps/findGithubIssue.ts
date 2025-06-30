@@ -1,11 +1,18 @@
-const exec = require('../util/asyncExec')
-const report = (...messages) => console.log('[PR Now] [Find Github Issue]', ...messages)
+import exec from '../util/asyncExec'
+import isNumeric from '../util/isNumeric'
+const report = (...messages: any[]) => console.log('[PR Now] [Find Github Issue]', ...messages)
 
-const isNumeric = require('../util/isNumeric')
+export interface WorkingKnowledge {
+  ticket?: string
+  ticketTitle?: string
+  ticketUrl?: string
+  cwd?: string
+  [key: string]: any
+}
 
-async function findGithubIssue (workingKnowledge) {
+export default async function findGithubIssue (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   let { ticket, ticketTitle, cwd } = workingKnowledge
-  let issueTitle, issueUrl, ticketUrl
+  let issueTitle: string | undefined, issueUrl: string | undefined, ticketUrl: string | undefined
   const issueNumber = Number.parseInt((ticket + '').split('/')[0].replace('#', ''))
   if (isNumeric(issueNumber)) {
     const { stdout, stderr } = await exec(`hub issue show ${issueNumber} -f "%t-|@|-%U"`)
@@ -30,5 +37,3 @@ async function findGithubIssue (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = findGithubIssue

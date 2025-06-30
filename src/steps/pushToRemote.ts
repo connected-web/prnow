@@ -1,12 +1,21 @@
-const exec = require('../util/asyncExec')
-const report = (...messages) => console.log('[PR Now] [Push to Remote]', ...messages)
+import exec from '../util/asyncExec'
+const report = (...messages: any[]) => console.log('[PR Now] [Push to Remote]', ...messages)
 
-async function pushToRemote (workingKnowledge) {
+export interface WorkingKnowledge {
+  ticket?: string
+  ticketTitle?: string
+  ticketUrl?: string
+  branchName?: string
+  cwd?: string
+  [key: string]: any
+}
+
+export default async function pushToRemote (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
   try {
     const pushToRemote = await exec('git push', { cwd })
     report('git push:', pushToRemote.stdout, pushToRemote.stderr)
-  } catch (ex) {
+  } catch (ex: any) {
     if (/no upstream branch/.test(ex.message)) {
       const pushToUpstream = await exec(`git push --set-upstream origin "${branchName}"`, { cwd })
       report('git push:', pushToUpstream.stdout, pushToUpstream.stderr)
@@ -20,5 +29,3 @@ async function pushToRemote (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = pushToRemote

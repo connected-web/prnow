@@ -1,5 +1,5 @@
-const { expect } = require('chai')
-const stepIndex = require('../../../src/steps/_index')
+import { expect } from 'chai'
+import stepIndex from '../../../src/steps/_index'
 
 describe('Step Index', () => {
   it('should export an object where all steps are functions', () => {

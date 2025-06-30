@@ -1,6 +1,14 @@
-const report = (...messages) => console.log('[PR Now] [Apply Defaults if Needed]', ...messages)
+const report = (...messages: any[]) => console.log('[PR Now] [Apply Defaults if Needed]', ...messages)
 
-async function applyDefaultsIfNeeded (workingKnowledge) {
+export interface WorkingKnowledge {
+  ticket?: string
+  ticketTitle?: string
+  ticketUrl?: string
+  cwd?: string
+  [key: string]: any
+}
+
+export default async function applyDefaultsIfNeeded (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   let { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
 
   // Apply a default title, and ticket url if not set by this point
@@ -10,7 +18,7 @@ async function applyDefaultsIfNeeded (workingKnowledge) {
 
   if (!ticketTitle) {
     ticketTitle = ticket + ' is feature complete'
-    ticketUrl = false
+    ticketUrl = ''
     report('Using default ticket title:', ticketTitle)
   }
 
@@ -21,5 +29,3 @@ async function applyDefaultsIfNeeded (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = applyDefaultsIfNeeded

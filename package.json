@@ -5,7 +5,7 @@
   "main": "src/prnow.js",
   "scripts": {
     "test": "standard --env mocha && npm run test:unit",
-    "test:unit": "mocha tests/unit/**/*test.js",
+    "test:unit": "mocha --import=tsx tests/unit/**/*.ts",
     "lint": "standard --env mocha --fix"
   },
   "bin": {
@@ -28,8 +28,12 @@
   },
   "homepage": "https://github.com/connected-web/prnow#readme",
   "devDependencies": {
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.0.8",
     "chai": "^4.3.4",
     "mocha": "^9.0.3",
-    "standard": "^14.3.3"
+    "standard": "^14.3.3",
+    "tsx": "^4.20.3"
   }
 }

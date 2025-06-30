@@ -1,7 +1,13 @@
-const exec = require('../util/asyncExec')
-const report = (...messages) => console.log('[PR Now] [Reset to default branch]', ...messages)
+import exec from '../util/asyncExec'
+const report = (...messages: any[]) => console.log('[PR Now] [Reset to default branch]', ...messages)
 
-async function resetGitToDefaultBranch (workingKnowledge) {
+export interface WorkingKnowledge {
+  cwd?: string
+  defaultBranchName?: string
+  [key: string]: any
+}
+
+export default async function resetGitToDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { cwd, defaultBranchName } = workingKnowledge
   // Checkout default branch, then pull and rebase
 
@@ -15,5 +21,3 @@ async function resetGitToDefaultBranch (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = resetGitToDefaultBranch

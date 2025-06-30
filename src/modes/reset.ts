@@ -1,8 +1,10 @@
-const { resetGitToDefaultBranch, findDefaultBranch } = require('../steps/_index')
+import steps from '../steps/_index'
+
+const { resetGitToDefaultBranch, findDefaultBranch } = steps
 
 const resetMode = {
   name: 'Reset it Already!',
-  setup: ({ command, args, cwd }) => {
+  setup: ({ command, args, cwd }: { command: string, args: string[], cwd: string }) => {
     const workingKnowledge = {
       cwd
     }
@@ -14,4 +16,4 @@ const resetMode = {
   }
 }
 
-module.exports = resetMode
+export default resetMode

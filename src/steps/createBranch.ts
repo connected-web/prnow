@@ -1,18 +1,27 @@
-const exec = require('../util/asyncExec')
-const createBranchNameSlug = require('../util/createBranchNameSlug')
-const report = (...messages) => console.log('[PR Now] [Create Branch]', ...messages)
+import exec from '../util/asyncExec'
+import createBranchNameSlug from '../util/createBranchNameSlug'
+const report = (...messages: any[]) => console.log('[PR Now] [Create Branch]', ...messages)
 
 const LEGACY_PATH_SEPARATOR = '/'
 const BRANCH_PATH_SEPARATOR = '.'
 
-async function createBranch (workingKnowledge) {
+export interface WorkingKnowledge {
+  ticket?: string
+  ticketTitle?: string
+  ticketUrl?: string
+  branchName?: string
+  cwd?: string
+  [key: string]: any
+}
+
+export default async function createBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Create a branch equivalent to the ticket name
 
   const currentBranchName = (await exec('git branch', { cwd })).stdout.split('\n').filter(n => /\* /.test(n))[0].substr(2)
   report('Current Branch Name', currentBranchName)
 
-  const titleSlug = createBranchNameSlug(ticketTitle)
+  const titleSlug = createBranchNameSlug(ticketTitle ?? '')
   const legacyBranchName = [ticket, titleSlug].join(LEGACY_PATH_SEPARATOR)
   const extendedBranchName = [ticket, titleSlug].join(BRANCH_PATH_SEPARATOR)
   const branchName = ticketTitle ? extendedBranchName : ticket
@@ -21,28 +30,28 @@ async function createBranch (workingKnowledge) {
   const checkForLegacyTicket = legacyBranchName
   const checkForExtendedTicket = extendedBranchName
 
-  const outcomes = {}
-  outcomes[checkForExactMatch] = alreadyOnBranch
-  outcomes[checkForLegacyTicket] = switchToNewBranchFormat
-  outcomes[checkForExtendedTicket] = reusingExistingBranch
+  const outcomes: { [key: string]: Function } = {}
+  if (checkForExactMatch) outcomes[checkForExactMatch] = alreadyOnBranch
+  if (checkForLegacyTicket) outcomes[checkForLegacyTicket] = switchToNewBranchFormat
+  if (checkForExtendedTicket) outcomes[checkForExtendedTicket] = reusingExistingBranch
   outcomes.default = checkoutNewBranch
 
   const action = outcomes[currentBranchName] || outcomes.default
   await action({ branchName, report })
 
-  async function alreadyOnBranch ({ branchName, report }) {
+  async function alreadyOnBranch ({ branchName, report }: { branchName: string, report: Function }) {
     report(`Already on branch ${branchName}`)
   }
 
-  async function switchToNewBranchFormat ({ branchName, report }) {
+  async function switchToNewBranchFormat ({ branchName, report }: { branchName: string, report: Function }) {
     report('Switching to new branch format:', branchName)
   }
 
-  async function reusingExistingBranch ({ branchName, report }) {
+  async function reusingExistingBranch ({ branchName, report }: { branchName: string, report: Function }) {
     report('Reusing existing branch:', branchName)
   }
 
-  async function checkoutNewBranch ({ branchName, report }) {
+  async function checkoutNewBranch ({ branchName, report }: { branchName: string, report: Function }) {
     const { stdout, stderr } = await exec(`git checkout -b "${branchName}"`, { cwd })
     report('git checkout:', stdout, stderr)
   }
@@ -55,5 +64,3 @@ async function createBranch (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = createBranch

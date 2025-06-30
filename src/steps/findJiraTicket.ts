@@ -1,18 +1,27 @@
-const fetch = require('../util/asyncFetch')
-const createBranchNameSlug = require('../util/createBranchNameSlug')
-const report = (...messages) => console.log('[PR Now] [Find Jira Ticket]', ...messages)
+import fetch from '../util/asyncFetch'
+import createBranchNameSlug from '../util/createBranchNameSlug'
+const report = (...messages: any[]) => console.log('[PR Now] [Find Jira Ticket]', ...messages)
 
-function tryParse (body) {
+function tryParse (body: string): any {
   let result = {}
   try {
     result = JSON.parse(body)
-  } catch (ex) {
+  } catch (ex: any) {
     report('Unable to parse', body, ex.message)
   }
   return result
 }
 
-async function findJiraTicket (workingKnowledge) {
+export interface WorkingKnowledge {
+  ticket?: string
+  branchName?: string
+  ticketTitle?: string
+  ticketUrl?: string
+  cwd?: string
+  [key: string]: any
+}
+
+export default async function findJiraTicket (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   let { ticket, branchName, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Find *TICK-24* to see if there is a matching ticket to extract a title for a PR
   if (!ticket) {
@@ -22,7 +31,7 @@ async function findJiraTicket (workingKnowledge) {
   const { PRNOW_JIRA_BASE_URL, PRNOW_JIRA_CLIENT_KEY, PRNOW_JIRA_API_KEY } = process.env
 
   if (!PRNOW_JIRA_BASE_URL) {
-    // Skiping this check
+    // Skipping this check
   } else {
     const jiraTicketId = ticket.split('/')[0]
 
@@ -38,10 +47,6 @@ async function findJiraTicket (workingKnowledge) {
         if (!parsedResponse.errorMessages) {
           ticketInfo = parsedResponse
           ticketTitle = ticketInfo.fields.summary
-          ticketUrl = `${PRNOW_JIRA_BASE_URL}/browse/${jiraTicketId}`
-          ticket = jiraTicketId
-          branchName = `${ticket}/${createBranchNameSlug(ticketTitle)}`
-          report('Found', ticket, `"${ticketTitle}"`)
         }
       }
     }
@@ -55,5 +60,3 @@ async function findJiraTicket (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = findJiraTicket

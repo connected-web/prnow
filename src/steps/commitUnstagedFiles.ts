@@ -1,8 +1,17 @@
-const exec = require('../util/asyncExec')
-const dedupe = require('../util/dedupe')
-const report = (...messages) => console.log('[PR Now] [Commit Unstaged Files]', ...messages)
+import exec from '../util/asyncExec'
+import dedupe from '../util/dedupe'
+const report = (...messages: any[]) => console.log('[PR Now] [Commit Unstaged Files]', ...messages)
 
-async function commitUnstagedFiles (workingKnowledge) {
+export interface WorkingKnowledge {
+  ticket?: string
+  ticketTitle?: string
+  ticketUrl?: string
+  branchName?: string
+  cwd?: string
+  [key: string]: any
+}
+
+export default async function commitUnstagedFiles (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
   // - Commit any unstaged files with the equivalent message "TICK-24 Title of ticket"
 
@@ -20,7 +29,7 @@ async function commitUnstagedFiles (workingKnowledge) {
   try {
     const gitCommit = await exec(`git commit -m "${message}"`)
     report(gitCommit.stdout, gitCommit.stderr)
-  } catch (ex) {
+  } catch (ex: any) {
     report('Unable to complete git commmit. Continuing...', ex.message)
   }
 
@@ -32,5 +41,3 @@ async function commitUnstagedFiles (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = commitUnstagedFiles

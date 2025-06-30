@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-
-const index = require('./')
-const report = (...messages) => console.log('[PR Now] [CLI]', ...messages)
+import * as index from './src/prnow'
+const report = (...messages: any[]) => console.log('[PR Now] [CLI]', ...messages)
 
 async function run () {
   const [,, command, ...args] = process.argv
@@ -9,7 +8,7 @@ async function run () {
 
   try {
     await index.run({ command, args, cwd })
-  } catch (ex) {
+  } catch (ex: any) {
     report('Unable to complete;', ex.message, ex)
   }
 }

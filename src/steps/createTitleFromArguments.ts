@@ -1,10 +1,17 @@
-const report = (...messages) => console.log('[PR Now] [Create Title from Arguments]', ...messages)
+const report = (...messages: any[]) => console.log('[PR Now] [Create Title from Arguments]', ...messages)
 
-async function createTitleFromArguments (workingKnowledge) {
+export interface WorkingKnowledge {
+  ticket?: string
+  args?: string[]
+  cwd?: string
+  [key: string]: any
+}
+
+export default async function createTitleFromArguments (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   let { ticket, args, cwd } = workingKnowledge
   args = args || []
 
-  let ticketTitle
+  let ticketTitle: string | undefined
 
   const words = [ticket].concat(args).join(' ').split(/\s+/)
     .filter(n => n)
@@ -24,5 +31,3 @@ async function createTitleFromArguments (workingKnowledge) {
     cwd
   })
 }
-
-module.exports = createTitleFromArguments

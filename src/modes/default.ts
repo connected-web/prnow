@@ -1,4 +1,5 @@
-const steps = require('../steps/_index')
+import steps from '../steps/_index'
+
 const {
   findDefaultBranch,
   createTitleFromArguments, findTicketFromBranchName,
@@ -9,7 +10,7 @@ const {
 
 const defaultMode = {
   name: 'Just Pull Request it Already!',
-  setup: ({ command, args, cwd }) => {
+  setup: ({ command, args, cwd }: { command: string, args: string[], cwd: string }) => {
     const workingKnowledge = {
       ticket: command,
       args,
@@ -32,4 +33,4 @@ const defaultMode = {
   }
 }
 
-module.exports = defaultMode
+export default defaultMode

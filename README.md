@@ -12,9 +12,9 @@ PR Now is a command line tool that automates a streamlined workflow for making p
 
 ## Prereqsuites
 
-- `node js > 10.x` installed : https://nodejs.org/en/
-- `hub > 2.14.x` installed : https://hub.github.com/
-- `git > 2.x` installed : https://git-scm.com/downloads
+- `node js > 22` installed : https://nodejs.org/en/
+- `hub > 2.25.x` installed : https://hub.github.com/
+- `git > 2` installed : https://git-scm.com/downloads
 - A project checked out from `github` : https://github.com/
 
 ## Environment Variables
@@ -112,6 +112,22 @@ alias prnow="npx github:connected-web/prnow"
 ```
 
 There is currently no way to set up multiple access tokens based on project - if this is of interest to you; please raise an issue. One solution might be to makhee separate aliases for t command - setting the appropriate environment variables just prior to command execution.
+
+## Usage (TypeScript, no build step)
+
+You can now run PR Now directly from TypeScript source using [tsx](https://npm.im/tsx):
+
+```sh
+npx tsx cli.ts <ticket-or-issue> [commit message]
+```
+
+For example:
+
+```sh
+npx tsx cli.ts TICKET-123 "Add new feature"
+```
+
+You can also use all previous features and environment variables as before.
 
 ## Examples
 

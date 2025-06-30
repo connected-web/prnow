@@ -1,4 +1,4 @@
-function slug (word) {
+function slug(word: string): string {
   return word.toLowerCase()
     .replace(/[.']/g, '')
     .replace(/[^a-z\d-]/g, ' ')
@@ -6,7 +6,7 @@ function slug (word) {
     .replace(/(\s)+/g, '-')
 }
 
-function dedupe (sentence) {
+export default function dedupe(sentence: string): string {
   const words = sentence.split(/\s+/)
   const output = words.filter((word, index, words) => {
     if (index > 0) {
@@ -18,5 +18,3 @@ function dedupe (sentence) {
 
   return output.join(' ')
 }
-
-module.exports = dedupe
