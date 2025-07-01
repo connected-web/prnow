@@ -10,8 +10,10 @@ export interface WorkingKnowledge {
 }
 
 export default async function showPRInBrowser (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { dryrunEnabled, ticket, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[ShowPRInBrowser]' })
+  const dryrunEnabled = workingKnowledge.dryrunEnabled
+  const cwd = typeof workingKnowledge.cwd === 'string' ? workingKnowledge.cwd : undefined
+  const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[ShowPRInBrowser]' })
   // Use `gh` to open a browser with the new PR so you can review and share with friends
 
   const ghShowCmd = 'gh pr view --web'
@@ -19,7 +21,7 @@ export default async function showPRInBrowser (workingKnowledge: WorkingKnowledg
     report(`${getToken(TOKENS.DRY_RUN)} Would run: ${ghShowCmd}`)
   } else {
     const ghShowPR = await exec(ghShowCmd, { cwd })
-    report(`gh: ${ghShowPR.stdout ?? ''} ${ghShowPR.stderr ?? ''}`)
+    report(`gh: ${typeof ghShowPR.stdout === 'string' ? ghShowPR.stdout : ''} ${typeof ghShowPR.stderr === 'string' ? ghShowPR.stderr : ''}`)
   }
 
   return Object.assign({}, workingKnowledge, {

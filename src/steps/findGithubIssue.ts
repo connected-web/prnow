@@ -1,7 +1,6 @@
 import { reportFactory } from '../util/report'
 import exec from '../util/asyncExec'
 import isNumeric from '../util/isNumeric'
-const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Github Issue]', ...messages)
 
 export interface WorkingKnowledge {
   ticket?: string
@@ -12,25 +11,28 @@ export interface WorkingKnowledge {
 }
 
 export default async function findGithubIssue (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { dryrunEnabled, ticket, ticketTitle, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindGithubIssue]' })
+  const { dryrunEnabled, cwd } = workingKnowledge
+  let ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
+  let ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
+  let ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[FindGithubIssue]' })
 
-  let issueTitle: string | undefined, issueUrl: string | undefined, ticketUrl: string | undefined
-  const ticketStr = typeof ticket === 'string' ? ticket : ''
+  let issueTitle: string | undefined, issueUrl: string | undefined
+  const ticketStr = ticket
   const issueNumber = Number.parseInt(ticketStr.split('/')[0].replace('#', ''))
   if (isNumeric(issueNumber)) {
     const { stdout, stderr } = await exec(`hub issue show ${issueNumber} -f "%t-|@|-%U"`)
 
-    if (typeof stderr === 'string' && stderr.length > 0) {
-      report(`No github issue found: ${stderr}`)
-    } else if (typeof stdout === 'string' && stdout.length > 0) {
-      [issueTitle, issueUrl] = stdout.trim().split('-|@|-')
+    if (typeof stderr === 'string' && String(stderr).length > 0) {
+      report(`No github issue found: ${String(stderr)}`)
+    } else if (typeof stdout === 'string' && String(stdout).length > 0) {
+      [issueTitle, issueUrl] = String(stdout).trim().split('-|@|-')
       ticket = '#' + String(issueNumber)
-      if (typeof ticketTitle !== 'string' || ticketTitle === '') {
-        ticketTitle = issueTitle
+      if (ticketTitle === '') {
+        ticketTitle = issueTitle ?? ''
       }
-      ticketUrl = issueUrl
-      report(`Using: ${ticket ?? ''} ${ticketTitle ?? ''} ${ticketUrl ?? ''}`)
+      ticketUrl = issueUrl ?? ''
+      report(`Using: ${ticket} ${ticketTitle} ${ticketUrl}`)
     }
   }
 

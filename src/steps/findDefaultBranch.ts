@@ -12,20 +12,20 @@ export interface WorkingKnowledge {
 
 export default async function findDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { dryrunEnabled, ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindDefaultBranch]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[FindDefaultBranch]' })
   // - Find the default branch for this repo
 
   let defaultBranchName = 'main'
 
   try {
     const originInformation = (await exec('git remote show origin', { cwd })).stdout
-    const headLine = originInformation.split('\n').find(n => typeof n === 'string' && n.includes('HEAD branch'))
+    const headLine = originInformation.split('\n').find(n => typeof n === 'string' && String(n).includes('HEAD branch'))
     if (typeof headLine === 'string') {
       defaultBranchName = headLine.trim().split(':')[1]?.trim() ?? 'main'
-      report(`Found: ${defaultBranchName}`)
+      report(`Found: ${String(defaultBranchName)}`)
     }
   } catch (ex: any) {
-    report(`Unable to discern default branch name from origin: ${ex.message ?? ''}`)
+    report(`Unable to discern default branch name from origin: ${String(ex.message)}`)
   }
 
   return Object.assign({}, workingKnowledge, {

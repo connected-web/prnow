@@ -22,12 +22,14 @@ export interface WorkingKnowledge {
 }
 
 export default async function findJiraTicket (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { dryrunEnabled, ticket, branchName, ticketTitle, ticketUrl, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindJiraTicket]' })
+  const { dryrunEnabled, branchName, cwd } = workingKnowledge
+  const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
+  let ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
+  const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[FindJiraTicket]' })
 
-  // - Find *TICK-24* to see if there is a matching ticket to extract a title for a PR
-  if (typeof ticket !== 'string' || ticket === '') {
-    throw new Error(`No ticket reference found (${String(ticket)}); prnow needs a reference to create a branch name`)
+  if (typeof ticket !== 'string' || ticket === undefined || ticket === '') {
+    throw new Error(`No ticket reference found (${String(workingKnowledge.ticket)}); prnow needs a reference to create a branch name`)
   }
 
   const { PRNOW_JIRA_BASE_URL, PRNOW_JIRA_CLIENT_KEY, PRNOW_JIRA_API_KEY } = process.env
@@ -35,8 +37,8 @@ export default async function findJiraTicket (workingKnowledge: WorkingKnowledge
   if (typeof PRNOW_JIRA_BASE_URL !== 'string' || PRNOW_JIRA_BASE_URL === '') {
     report('Jira integration skipped: PRNOW_JIRA_BASE_URL or CLIENT_KEY environment variable not set. Set these to enable Jira ticket lookups.')
   } else {
-    const jiraTicketId = ticket?.split('/')[0] ?? ''
-    if (typeof ticketTitle !== 'string' || ticketTitle === '') {
+    const jiraTicketId = ticket.split('/')[0] ?? ''
+    if (ticketTitle === '') {
       const certFilePath = PRNOW_JIRA_CLIENT_KEY
       let ticketInfo: Record<string, unknown> | undefined
       if (typeof certFilePath !== 'string' || certFilePath === '') {

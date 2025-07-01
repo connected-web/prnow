@@ -2,7 +2,6 @@ import { reportFactory } from '../util/report'
 import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 import dedupe from '../util/dedupe'
-const report = (...messages: unknown[]): void => console.log('[PR Now] [Commit Unstaged Files]', ...messages)
 
 export interface WorkingKnowledge {
   ticket?: string
@@ -15,38 +14,35 @@ export interface WorkingKnowledge {
 }
 
 export default async function commitUnstagedFiles (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { dryrunEnabled, ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[CommitUnstagedFiles]' })
-  // - Commit any unstaged files with the equivalent message "TICK-24 Title of ticket"
-
-  const safeTicket = typeof ticket === 'string' ? ticket : ''
-  const safeTitle = typeof ticketTitle === 'string' ? ticketTitle : ''
-  const safeUrl = typeof ticketUrl === 'string' ? ticketUrl : ''
+  const { dryrunEnabled, branchName, cwd } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[CommitUnstagedFiles]' })
+  const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
+  const ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
+  const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
   const message = [
-    dedupe(`${safeTicket} ${safeTitle}`),
-    safeUrl !== '' ? `See: ${safeUrl}` : ''
+    dedupe(`${ticket} ${ticketTitle}`),
+    ticketUrl !== '' ? `See: ${ticketUrl}` : ''
   ]
     .filter(n => typeof n === 'string' && n.length > 0)
     .map(n => n.replace(/"/g, '"'))
     .join('\n')
 
-  if (dryrunEnabled === true) {
+  if (dryrunEnabled !== undefined && dryrunEnabled) {
     report(`${getToken(TOKENS.DRY_RUN)} Would run: git add .`)
     report(`${getToken(TOKENS.DRY_RUN)} Would run: git commit -m "${message}"`)
   } else {
     const gitAdd = await exec('git add .', { cwd })
-    report(`git add: ${gitAdd.stdout ?? ''} ${gitAdd.stderr ?? ''}`)
+    report('git add: ' + String(gitAdd.stdout ?? '') + ' ' + String(gitAdd.stderr ?? ''))
     try {
-      // Check if there are staged changes before committing
       const { stdout: statusStdout } = await exec('git diff --cached --name-only', { cwd })
-      if (!statusStdout || statusStdout.trim() === '') {
+      if (typeof statusStdout !== 'string' || statusStdout === undefined || statusStdout === null || statusStdout.trim() === '') {
         report('No staged changes to commit.')
       } else {
         const gitCommit = await exec(`git commit -m "${message}"`, { cwd })
-        report(`git commit: ${gitCommit.stdout ?? ''} ${gitCommit.stderr ?? ''}`)
+        report('git commit: ' + String(gitCommit.stdout ?? '') + ' ' + String(gitCommit.stderr ?? ''))
       }
     } catch (ex: any) {
-      report(`Unable to complete git commit. Continuing... ${ex.message ?? ''}`)
+      report('Unable to complete git commit. Continuing... ' + String(ex.message ?? ''))
     }
   }
   return Object.assign({}, workingKnowledge, {

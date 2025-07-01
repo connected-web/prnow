@@ -1,7 +1,5 @@
-import { reportFactory } from '../util/report'
 import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
-const report = (...messages: unknown[]): void => console.log('[PR Now] [Push to Remote]', ...messages)
 
 export interface WorkingKnowledge {
   ticket?: string
@@ -14,24 +12,27 @@ export interface WorkingKnowledge {
 }
 
 export default async function pushToRemote (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { dryrunEnabled, ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[PushToRemote]' })
+  const { dryrunEnabled, cwd } = workingKnowledge
+  const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
+  const ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
+  const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
+  const branchName = typeof workingKnowledge.branchName === 'string' ? workingKnowledge.branchName : ''
 
   if (dryrunEnabled === true) {
-    report(`${getToken(TOKENS.DRY_RUN)} Would run: git push`)
-    report(`${getToken(TOKENS.DRY_RUN)} Would run: git push --set-upstream origin "${typeof branchName === 'string' ? branchName : ''}" (if no upstream branch)`)
+    console.log(`${getToken(TOKENS.DRY_RUN)} Would run: git push`)
+    console.log(`${getToken(TOKENS.DRY_RUN)} Would run: git push --set-upstream origin "${branchName}" (if no upstream branch)`)
   } else {
     try {
       const pushToRemote = await exec('git push', { cwd })
-      report(`git push: ${pushToRemote.stdout ?? ''} ${pushToRemote.stderr ?? ''}`)
+      console.log(`git push: ${pushToRemote.stdout ?? ''} ${pushToRemote.stderr ?? ''}`)
     } catch (ex: any) {
       if (typeof ex.message === 'string' && /no upstream branch/.test(ex.message)) {
-        const pushToUpstream = await exec(`git push --set-upstream origin "${typeof branchName === 'string' ? branchName : ''}"`, { cwd })
-        report(`git push: ${pushToUpstream.stdout ?? ''} ${pushToUpstream.stderr ?? ''}`)
+        const pushToUpstream = await exec(`git push --set-upstream origin "${branchName}"`, { cwd })
+        console.log(`git push: ${typeof pushToUpstream.stdout === 'string' ? pushToUpstream.stdout : ''} ${typeof pushToUpstream.stderr === 'string' ? pushToUpstream.stderr : ''}`)
       } else if (typeof ex.message === 'string' && /non-fast-forward/.test(ex.message)) {
-        report('Push failed: Your branch is behind its remote counterpart. Please run `git pull --rebase` and try again.')
+        console.log('Push failed: Your branch is behind its remote counterpart. Please run `git pull --rebase` and try again.')
       } else {
-        report(`Push failed: ${ex.message ?? ''}`)
+        console.log(`Push failed: ${String(ex.message)}`)
       }
     }
   }
@@ -40,6 +41,7 @@ export default async function pushToRemote (workingKnowledge: WorkingKnowledge):
     ticket,
     ticketTitle,
     ticketUrl,
+    branchName,
     cwd
   })
 }

@@ -12,9 +12,9 @@ export interface ReportOptions {
  */
 export function reportFactory (options: ReportOptions = {}) {
   return function report (...messages: unknown[]): void {
-    const dryrunPrefix = options.dryrunEnabled ? '[💦]' : ''
+    const dryrunPrefix = options.dryrunEnabled === true ? '[💦]' : ''
     const prnowPrefix = '[PR Now]'
-    const reportLine = `${prnowPrefix} ${dryrunPrefix} ${options.stepPrefix}`
+    const reportLine = [prnowPrefix, dryrunPrefix, options.stepPrefix].filter(Boolean).join(' ')
     console.log(reportLine, ...messages)
   }
 }

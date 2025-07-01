@@ -1,6 +1,5 @@
 import { reportFactory } from '../util/report'
 import exec from '../util/asyncExec'
-const report = (...messages: unknown[]): void => console.log('[PR Now] [Reset to default branch]', ...messages)
 
 export interface WorkingKnowledge {
   cwd?: string
@@ -10,11 +9,11 @@ export interface WorkingKnowledge {
 
 export default async function resetGitToDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { dryrunEnabled, cwd, defaultBranchName } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[ResetGitToDefaultBranch]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[ResetGitToDefaultBranch]' })
 
-  // Checkout default branch, then pull and rebase
-  const gitCheckoutDefault = await exec(`git checkout ${typeof defaultBranchName === 'string' ? defaultBranchName : ''}`, { cwd })
-  report(`git checkout: ${gitCheckoutDefault.stdout ?? ''} ${gitCheckoutDefault.stderr ?? ''}`)
+  const branch = typeof defaultBranchName === 'string' ? defaultBranchName : ''
+  const gitCheckoutDefault = await exec(`git checkout ${branch}`, { cwd })
+  report(`git checkout: ${typeof gitCheckoutDefault.stdout === 'string' ? gitCheckoutDefault.stdout : ''} ${typeof gitCheckoutDefault.stderr === 'string' ? gitCheckoutDefault.stderr : ''}`)
 
   const gitPullAndRebase = await exec('git pull -r', { cwd })
   report(`git pull: ${gitPullAndRebase.stdout ?? ''} ${gitPullAndRebase.stderr ?? ''}`)
