@@ -17,7 +17,7 @@ export default async function createAGithubPR (workingKnowledge: WorkingKnowledg
   const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
   const ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
   const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Create a Github PR]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Create a GitHub PR]' })
   // Use `gh` to create a PR in github with a title, and a link to the ticket in the description
 
   const title = dedupe(`${ticket} ${ticketTitle}`)

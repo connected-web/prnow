@@ -13,7 +13,7 @@ export interface WorkingKnowledge {
 
 export default async function findDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { dryrunEnabled, ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[FindDefaultBranch]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Find default branch]' })
   // - Find the default branch for this repo
 
   let defaultBranchName = 'main'

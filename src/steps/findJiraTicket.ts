@@ -1,6 +1,6 @@
 import { reportFactory } from '../util/report'
 import fetch from '../util/asyncFetch'
-const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Jira Ticket]', ...messages)
+const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Jira ticket]', ...messages)
 
 function tryParse (body: string): Record<string, unknown> {
   let result: Record<string, unknown> = {}
@@ -27,7 +27,7 @@ export default async function findJiraTicket (workingKnowledge: WorkingKnowledge
   const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
   let ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
   const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[FindJiraTicket]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Find Jira ticket]' })
 
   if (typeof ticket !== 'string' || ticket === undefined || ticket === '') {
     throw new Error(`No ticket reference found (${String(workingKnowledge.ticket)}); prnow needs a reference to create a branch name`)

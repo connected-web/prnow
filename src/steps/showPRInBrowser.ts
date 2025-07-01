@@ -12,7 +12,7 @@ export default async function showPRInBrowser (workingKnowledge: WorkingKnowledg
   const dryrunEnabled = workingKnowledge.dryrunEnabled
   const cwd = typeof workingKnowledge.cwd === 'string' ? workingKnowledge.cwd : undefined
   const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[ShowPRInBrowser]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Show PR in browser]' })
   // Use `gh` to open a browser with the new PR so you can review and share with friends
 
   const ghShowCmd = 'gh pr view --web'

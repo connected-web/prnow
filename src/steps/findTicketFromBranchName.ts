@@ -13,7 +13,7 @@ export interface WorkingKnowledge {
 export default async function findTicketFromBranchName (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { dryrunEnabled, ticketTitle, defaultBranchName, cwd } = workingKnowledge
   let ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[FindTicketFromBranchName]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Find Jira ticket]' })
 
   const { stdout, stderr } = await exec('git rev-parse --abbrev-ref HEAD', { cwd })
   report(`Asked git for the current branch name: ${stdout ?? ''} ${stderr ?? ''}`)

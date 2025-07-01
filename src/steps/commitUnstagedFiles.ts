@@ -14,7 +14,7 @@ export interface WorkingKnowledge {
 
 export default async function commitUnstagedFiles (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { dryrunEnabled, branchName, cwd } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[CommitUnstagedFiles]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Commit unstaged files]' })
   const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
   const ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
   const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''

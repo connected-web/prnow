@@ -7,6 +7,7 @@ export interface WorkingKnowledge {
   ticketTitle?: string
   ticketUrl?: string
   cwd?: string
+  dryrunEnabled?: boolean
   [key: string]: unknown
 }
 
@@ -15,7 +16,7 @@ export default async function findGithubIssue (workingKnowledge: WorkingKnowledg
   let ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
   let ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
   let ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[FindGithubIssue]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Find GitHub issue]' })
 
   let issueTitle: string | undefined, issueUrl: string | undefined
   const ticketStr = ticket
