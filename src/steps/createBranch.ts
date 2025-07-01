@@ -1,7 +1,7 @@
 import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 import createBranchNameSlug from '../util/createBranchNameSlug'
-const report = (...messages: unknown[]): void => console.log('[PR Now] [Create Branch]', ...messages)
+import { reportFactory } from '../util/report'
 
 const LEGACY_PATH_SEPARATOR = '/'
 const BRANCH_PATH_SEPARATOR = '.'
@@ -12,6 +12,7 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   branchName?: string
   cwd?: string
+  dryrunEnabled?: boolean
   [key: string]: unknown
 }
 
@@ -43,10 +44,11 @@ function notEmpty (value: string | undefined): value is string {
 
 export default async function createBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, cwd, dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[CreateBranch]' })
   // - Create a branch equivalent to the ticket name
 
   const currentBranchName = (await exec('git branch', { cwd })).stdout.split('\n').filter(n => typeof n === 'string' && n.includes('* '))[0]?.substr(2) ?? ''
-  report('Current Branch Name', currentBranchName)
+  report('Current Branch Name ' + currentBranchName)
 
   const legacyBranchName = [ticket, ticketTitle].map(x => typeof x === 'string' ? x : '').join(LEGACY_PATH_SEPARATOR)
   const extendedBranchName = [ticket, ticketTitle].map(x => typeof x === 'string' ? x : '').join(BRANCH_PATH_SEPARATOR)
