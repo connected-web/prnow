@@ -3,7 +3,7 @@ import * as index from './src/prnow'
 const report = (...messages: any[]) => console.log('[PR Now] [CLI]', ...messages)
 
 function hasPreviewFlag(args: string[]): boolean {
-  return args.includes('--dryrunEnabled') || args.includes('--dry-run')
+  return args.includes('--preview') || args.includes('--dry-run')
 }
 
 async function run () {
