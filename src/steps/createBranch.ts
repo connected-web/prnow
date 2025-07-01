@@ -46,7 +46,12 @@ export default async function createBranch (workingKnowledge: WorkingKnowledge):
   const titleSlug = createBranchNameSlug(ticketTitle ?? '')
   const legacyBranchName = [ticket, titleSlug].join(LEGACY_PATH_SEPARATOR)
   const extendedBranchName = [ticket, titleSlug].join(BRANCH_PATH_SEPARATOR)
-  const branchName = ticketTitle ? extendedBranchName : ticket
+  // Only add preview/dry-run to branch name if not already present
+  let branchName = ticketTitle ? extendedBranchName : ticket
+  if (branchName && dryrunEnabled && (branchName.endsWith('--preview') || branchName.endsWith('--dry-run'))) {
+    // Remove accidental preview/dry-run suffix
+    branchName = branchName.replace(/(--preview|--dry-run)$/, '')
+  }
 
   const checkForExactMatch = branchName
   const checkForLegacyTicket = legacyBranchName

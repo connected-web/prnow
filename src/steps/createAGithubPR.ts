@@ -14,22 +14,18 @@ export interface WorkingKnowledge {
 
 export default async function createAGithubPR (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName, dryrunEnabled } = workingKnowledge
-  // - Use `hub` to create a PR in github with a title, and a link to the ticket in the description
+  // Use `gh` to create a PR in github with a title, and a link to the ticket in the description
 
-  const messages = [
-    dedupe(`${ticket} ${ticketTitle}`),
-    ticketUrl ? `See: ${ticketUrl}` : 'There is no ticket for this work.'
-  ]
-    .filter(n => n)
-    .map(n => n.replace(/["]/g, '\\"'))
-    .map(m => `-m "${m}"`).join(' ')
+  const title = dedupe(`${ticket} ${ticketTitle}`)
+  const body = ticketUrl ? `See: ${ticketUrl}` : 'There is no ticket for this work.'
+  const ghCmd = `gh pr create --base ${defaultBranchName} --title "${title}" --body "${body}" --web --fill`
 
   if (dryrunEnabled) {
-    report(`[DRY RUN] Would run: hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`)
+    report(`[DRY RUN] Would run: ${ghCmd}`)
   } else {
     try {
-      const draftHubPR = await exec(`hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`, { cwd })
-      report('Hub:', draftHubPR.stdout, draftHubPR.stderr)
+      const draftGhPR = await exec(ghCmd, { cwd })
+      report('gh:', draftGhPR.stdout, draftGhPR.stderr)
     } catch (ex: any) {
       if (/A pull request already exists/.test(ex.message)) {
         report(ex.message)
