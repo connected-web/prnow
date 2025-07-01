@@ -1,15 +1,15 @@
-const report = (...messages: any[]) => console.log('[PR Now] [Create Title from Arguments]', ...messages)
+const report = (...messages: unknown[]): void => console.log('[PR Now] [Create Title from Arguments]', ...messages)
 
 export interface WorkingKnowledge {
   ticket?: string
   args?: string[]
   cwd?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default async function createTitleFromArguments (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  let { ticket, args, cwd, dryrunEnabled } = workingKnowledge
-  args = args || []
+  let { ticket, args, cwd } = workingKnowledge
+  args = Array.isArray(args) ? args : []
 
   let ticketTitle: string | undefined
 
@@ -17,7 +17,7 @@ export default async function createTitleFromArguments (workingKnowledge: Workin
   const filteredArgs = args.filter(arg => arg !== '--preview' && arg !== '--dry-run')
 
   const words = [ticket].concat(filteredArgs).join(' ').split(/[.\s+]/)
-    .filter(n => n)
+    .filter(n => typeof n === 'string' && n.length > 0)
     .filter(n => n !== '-m')
 
   if (words.length === 1) {

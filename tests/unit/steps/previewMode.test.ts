@@ -18,20 +18,20 @@ describe('Preview/Dry-Run Mode', () => {
   it('should log dryrunEnabled messages for commitUnstagedFiles', async () => {
     await commitUnstagedFiles({ dryrunEnabled: true })
     const logCalls = consoleLogStub.getCalls().map(call => call.args.join(' ')).join('\n')
-    expect(logCalls).to.include('[DRY RUN] Would run: git add .')
-    expect(logCalls).to.include('[DRY RUN] Would run: git commit -m')
+    expect(logCalls).to.include('[💦] Would run: git add .')
+    expect(logCalls).to.include('[💦] Would run: git commit -m')
   })
 
   it('should log dryrunEnabled messages for pushToRemote', async () => {
     await pushToRemote({ dryrunEnabled: true, branchName: 'test-branch' })
     const logCalls = consoleLogStub.getCalls().map(call => call.args.join(' ')).join('\n')
-    expect(logCalls).to.include('[DRY RUN] Would run: git push')
-    expect(logCalls).to.include('[DRY RUN] Would run: git push --set-upstream origin "test-branch"')
+    expect(logCalls).to.include('[💦] Would run: git push')
+    expect(logCalls).to.include('[💦] Would run: git push --set-upstream origin "test-branch"')
   })
 
   it('should log dryrunEnabled messages for createAGithubPR', async () => {
     await createAGithubPR({ dryrunEnabled: true, defaultBranchName: 'main' })
     const logCalls = consoleLogStub.getCalls().map(call => call.args.join(' ')).join('\n')
-    expect(logCalls).to.include('[DRY RUN] Would run: hub pull-request -b main -f --browse --no-edit')
+    expect(logCalls).to.include('[💦] Would run: gh pr create --base main --title "" --body "There is no ticket for this work." --web --fill')
   })
 })

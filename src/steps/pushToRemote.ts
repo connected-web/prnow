@@ -1,5 +1,6 @@
+import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
-const report = (...messages: any[]) => console.log('[PR Now] [Push to Remote]', ...messages)
+const report = (...messages: unknown[]): void => console.log('[PR Now] [Push to Remote]', ...messages)
 
 export interface WorkingKnowledge {
   ticket?: string
@@ -8,21 +9,21 @@ export interface WorkingKnowledge {
   branchName?: string
   cwd?: string
   dryrunEnabled?: boolean
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default async function pushToRemote (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, branchName, cwd, dryrunEnabled } = workingKnowledge
-  if (dryrunEnabled) {
-    report(`[DRY RUN] Would run: git push`)
-    report(`[DRY RUN] Would run: git push --set-upstream origin "${branchName}" (if no upstream branch)`)
+  if (dryrunEnabled === true) {
+    report(`${getToken(TOKENS.DRY_RUN)} Would run: git push`)
+    report(`${getToken(TOKENS.DRY_RUN)} Would run: git push --set-upstream origin "${typeof branchName === 'string' ? branchName : ''}" (if no upstream branch)`)
   } else {
     try {
       const pushToRemote = await exec('git push', { cwd })
       report('git push:', pushToRemote.stdout, pushToRemote.stderr)
     } catch (ex: any) {
-      if (/no upstream branch/.test(ex.message)) {
-        const pushToUpstream = await exec(`git push --set-upstream origin "${branchName}"`, { cwd })
+      if (typeof ex.message === 'string' && /no upstream branch/.test(ex.message)) {
+        const pushToUpstream = await exec(`git push --set-upstream origin "${typeof branchName === 'string' ? branchName : ''}"`, { cwd })
         report('git push:', pushToUpstream.stdout, pushToUpstream.stderr)
       }
     }

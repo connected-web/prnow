@@ -1,5 +1,5 @@
 import exec from '../util/asyncExec'
-const report = (...messages: any[]) => console.log('[PR Now] [Find Default Branch]', ...messages)
+const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Default Branch]', ...messages)
 
 export interface WorkingKnowledge {
   ticket?: string
@@ -7,7 +7,7 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   cwd?: string
   defaultBranchName?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default async function findDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
@@ -18,8 +18,11 @@ export default async function findDefaultBranch (workingKnowledge: WorkingKnowle
 
   try {
     const originInformation = (await exec('git remote show origin', { cwd })).stdout
-    defaultBranchName = originInformation.split('\n').filter(n => n.includes('HEAD branch'))[0].trim().split(':')[1].trim()
-    report('Found:', defaultBranchName)
+    const headLine = originInformation.split('\n').find(n => typeof n === 'string' && n.includes('HEAD branch'))
+    if (typeof headLine === 'string') {
+      defaultBranchName = headLine.trim().split(':')[1]?.trim() ?? 'main'
+      report('Found:', defaultBranchName)
+    }
   } catch (ex: any) {
     report('Unable to discern default branch name from origin:', ex.message)
   }

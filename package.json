@@ -4,9 +4,9 @@
   "description": "Command line tool to create a PR now - minimal fuss - automated commit, push, and PR using hub",
   "main": "src/prnow.ts",
   "scripts": {
-    "test": "standard --env mocha && npm run test:unit",
+    "test": "ts-standard --env mocha && npm run test:unit",
     "test:unit": "mocha --import=tsx tests/unit/**/*.ts",
-    "lint": "standard --env mocha --fix"
+    "lint": "ts-standard --env mocha --fix"
   },
   "bin": {
     "prnow": "cli.ts"
@@ -38,6 +38,6 @@
     "chai": "^4.3.4",
     "mocha": "^9.0.3",
     "sinon": "^21.0.0",
-    "standard": "^14.3.3"
+    "ts-standard": "^12.0.2"
   }
 }

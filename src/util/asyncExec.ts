@@ -5,15 +5,15 @@ export interface ExecResult {
   stderr: string
 }
 
-export default function exec(command: string, options?: any): Promise<ExecResult> {
-  return new Promise((resolve, reject) => {
+export default async function exec (command: string, options?: Record<string, unknown>): Promise<ExecResult> {
+  return await new Promise((resolve, reject) => {
     execCb(command, options, (error, stdout, stderr) => {
-      if (error) {
+      if (error !== null && error !== undefined) {
         reject(error)
       } else {
         resolve({
-          stdout: (stdout ? stdout.toString().trim() : ''),
-          stderr: (stderr ? stderr.toString().trim() : '')
+          stdout: typeof stdout === 'string' ? stdout.toString().trim() : '',
+          stderr: typeof stderr === 'string' ? stderr.toString().trim() : ''
         })
       }
     })

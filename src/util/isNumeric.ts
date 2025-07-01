@@ -1,3 +1,3 @@
-export default function isNumeric(num: any): boolean {
+export default function isNumeric (num: any): boolean {
   return !isNaN(num)
 }
