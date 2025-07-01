@@ -1,4 +1,3 @@
-import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 
 export interface WorkingKnowledge {
@@ -19,8 +18,8 @@ export default async function pushToRemote (workingKnowledge: WorkingKnowledge):
   const branchName = typeof workingKnowledge.branchName === 'string' ? workingKnowledge.branchName : ''
 
   if (dryrunEnabled === true) {
-    console.log(`${getToken(TOKENS.DRY_RUN)} Would run: git push`)
-    console.log(`${getToken(TOKENS.DRY_RUN)} Would run: git push --set-upstream origin "${branchName}" (if no upstream branch)`)
+    console.log('Would run: git push')
+    console.log(`Would run: git push --set-upstream origin "${branchName}" (if no upstream branch)`)
   } else {
     try {
       const pushToRemote = await exec('git push', { cwd })

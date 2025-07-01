@@ -1,5 +1,4 @@
 import { reportFactory } from '../util/report'
-import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 
 export interface WorkingKnowledge {
@@ -18,7 +17,7 @@ export default async function showPRInBrowser (workingKnowledge: WorkingKnowledg
 
   const ghShowCmd = 'gh pr view --web'
   if (dryrunEnabled === true) {
-    report(`${getToken(TOKENS.DRY_RUN)} Would run: ${ghShowCmd}`)
+    report(`Would run: ${ghShowCmd}`)
   } else {
     const ghShowPR = await exec(ghShowCmd, { cwd })
     report(`gh: ${typeof ghShowPR.stdout === 'string' ? ghShowPR.stdout : ''} ${typeof ghShowPR.stderr === 'string' ? ghShowPR.stderr : ''}`)

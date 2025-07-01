@@ -1,5 +1,4 @@
 import { reportFactory } from '../util/report'
-import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 import dedupe from '../util/dedupe'
 
@@ -28,8 +27,8 @@ export default async function commitUnstagedFiles (workingKnowledge: WorkingKnow
     .join('\n')
 
   if (dryrunEnabled !== undefined && dryrunEnabled) {
-    report(`${getToken(TOKENS.DRY_RUN)} Would run: git add .`)
-    report(`${getToken(TOKENS.DRY_RUN)} Would run: git commit -m "${message}"`)
+    report('Would run: git add .')
+    report(`Would run: git commit -m "${message}"`)
   } else {
     const gitAdd = await exec('git add .', { cwd })
     report('git add: ' + String(gitAdd.stdout ?? '') + ' ' + String(gitAdd.stderr ?? ''))

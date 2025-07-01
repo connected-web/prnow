@@ -1,4 +1,3 @@
-import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 import dedupe from '../util/dedupe'
 import { reportFactory } from '../util/report'
@@ -27,7 +26,7 @@ export default async function createAGithubPR (workingKnowledge: WorkingKnowledg
   const ghCmd = `gh pr create --base ${baseBranch} --title "${title}" --body "${body}" --web --fill`
 
   if (dryrunEnabled === true) {
-    report(`${getToken(TOKENS.DRY_RUN)} Would run: ${ghCmd}`)
+    report(`Would run: ${ghCmd}`)
   } else {
     try {
       const draftGhPR = await exec(ghCmd, { cwd })

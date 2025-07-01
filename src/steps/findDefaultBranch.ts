@@ -7,6 +7,7 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   cwd?: string
   defaultBranchName?: string
+  dryrunEnabled?: boolean
   [key: string]: unknown
 }
 

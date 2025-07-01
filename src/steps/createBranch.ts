@@ -1,4 +1,3 @@
-import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 import createBranchNameSlug from '../util/createBranchNameSlug'
 import { reportFactory } from '../util/report'
@@ -30,7 +29,7 @@ async function reusingExistingBranch ({ branchName, report }: { branchName: stri
 
 async function checkoutNewBranch ({ branchName, report, cwd, dryrunEnabled }: { branchName: string, report: (...args: unknown[]) => void, cwd: string, dryrunEnabled: boolean }): Promise<void> {
   if (dryrunEnabled) {
-    report(`${getToken(TOKENS.DRY_RUN)} Would run: git checkout -b "${String(branchName)}"`)
+    report(`Would run: git checkout -b "${String(branchName)}"`)
     return
   }
   report('Checking out new branch:', branchName)
