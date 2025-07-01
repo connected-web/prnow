@@ -8,12 +8,18 @@ export interface RunOptions {
   preview?: boolean
 }
 
+type InitialWorkingKnowledge = {
+  cwd?: string
+  preview?: boolean
+  [key: string]: any
+}
+
 export async function run ({ command, args, cwd, preview }: RunOptions): Promise<void> {
   const lcCommand = (command + '').toLowerCase()
   const mode = (modes as any)[lcCommand] || (modes as any).default
-  let workingKnowledge = mode.setup({ command, args, cwd, preview })
+  let workingKnowledge: InitialWorkingKnowledge = mode.setup({ command, args, cwd, preview })
 
-  const previewFlag = preview ? ' [PREVIEW]' : ''
+  const previewFlag = preview ? '[PREVIEW]' : ''
   report(mode.name, previewFlag)
   for (const [, stepFn] of Object.entries(mode.steps)) {
     if (typeof stepFn === 'function') {

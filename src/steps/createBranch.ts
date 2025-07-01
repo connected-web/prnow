@@ -14,8 +14,26 @@ export interface WorkingKnowledge {
   [key: string]: any
 }
 
+async function alreadyOnBranch ({ branchName, report }: { branchName: string, report: Function }) {
+  report(`Already on branch ${branchName}`)
+}
+
+async function switchToNewBranchFormat ({ branchName, report }: { branchName: string, report: Function }) {
+  report('Switching to new branch format:', branchName)
+}
+
+async function reusingExistingBranch ({ branchName, report }: { branchName: string, report: Function }) {
+  report('Reusing existing branch:', branchName)
+}
+
+async function checkoutNewBranch ({ branchName, report, cwd, preview }: { branchName: string, report: Function, cwd: string, preview: boolean }) {
+  report('Checking out new branch:', branchName)
+  const { stdout, stderr } = await exec(`git checkout -b "${branchName}"`, { cwd })
+  report('git checkout:', stdout, stderr)
+}
+
 export default async function createBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
+  const { ticket, ticketTitle, ticketUrl, cwd, preview } = workingKnowledge
   // - Create a branch equivalent to the ticket name
 
   const currentBranchName = (await exec('git branch', { cwd })).stdout.split('\n').filter(n => /\* /.test(n))[0].substr(2)
@@ -37,24 +55,7 @@ export default async function createBranch (workingKnowledge: WorkingKnowledge):
   outcomes.default = checkoutNewBranch
 
   const action = outcomes[currentBranchName] || outcomes.default
-  await action({ branchName, report })
-
-  async function alreadyOnBranch ({ branchName, report }: { branchName: string, report: Function }) {
-    report(`Already on branch ${branchName}`)
-  }
-
-  async function switchToNewBranchFormat ({ branchName, report }: { branchName: string, report: Function }) {
-    report('Switching to new branch format:', branchName)
-  }
-
-  async function reusingExistingBranch ({ branchName, report }: { branchName: string, report: Function }) {
-    report('Reusing existing branch:', branchName)
-  }
-
-  async function checkoutNewBranch ({ branchName, report }: { branchName: string, report: Function }) {
-    const { stdout, stderr } = await exec(`git checkout -b "${branchName}"`, { cwd })
-    report('git checkout:', stdout, stderr)
-  }
+  await action({ branchName, report, cwd, preview })
 
   return Object.assign({}, workingKnowledge, {
     ticket,
