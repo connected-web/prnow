@@ -1,6 +1,7 @@
 import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 import dedupe from '../util/dedupe'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Create a Github PR]', ...messages)
 
 export interface WorkingKnowledge {
@@ -15,6 +16,7 @@ export interface WorkingKnowledge {
 
 export default async function createAGithubPR (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName, dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[CreateAGithubPR]' })
   // Use `gh` to create a PR in github with a title, and a link to the ticket in the description
 
   const title = dedupe(`${typeof ticket === 'string' ? ticket : ''} ${typeof ticketTitle === 'string' ? ticketTitle : ''}`)

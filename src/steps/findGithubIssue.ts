@@ -1,5 +1,6 @@
 import exec from '../util/asyncExec'
 import isNumeric from '../util/isNumeric'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Github Issue]', ...messages)
 
 export interface WorkingKnowledge {
@@ -11,6 +12,9 @@ export interface WorkingKnowledge {
 }
 
 export default async function findGithubIssue (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
+  const { dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindGithubIssue]' })
+
   let { ticket, ticketTitle, cwd } = workingKnowledge
   let issueTitle: string | undefined, issueUrl: string | undefined, ticketUrl: string | undefined
   const ticketStr = typeof ticket === 'string' ? ticket : ''

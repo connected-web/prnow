@@ -1,4 +1,5 @@
 import exec from '../util/asyncExec'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Reset to default branch]', ...messages)
 
 export interface WorkingKnowledge {
@@ -8,9 +9,10 @@ export interface WorkingKnowledge {
 }
 
 export default async function resetGitToDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { cwd, defaultBranchName } = workingKnowledge
-  // Checkout default branch, then pull and rebase
+  const { cwd, defaultBranchName, dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[ResetGitToDefaultBranch]' })
 
+  // Checkout default branch, then pull and rebase
   const gitCheckoutDefault = await exec(`git checkout ${typeof defaultBranchName === 'string' ? defaultBranchName : ''}`, { cwd })
   report('git checkout:', gitCheckoutDefault.stdout, gitCheckoutDefault.stderr)
 

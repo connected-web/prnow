@@ -1,3 +1,5 @@
+import { reportFactory } from '../util/report'
+
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Create Title from Arguments]', ...messages)
 
 export interface WorkingKnowledge {
@@ -8,6 +10,9 @@ export interface WorkingKnowledge {
 }
 
 export default async function createTitleFromArguments (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
+  const { dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[CreateTitleFromArguments]' })
+
   let { ticket, args, cwd } = workingKnowledge
   args = Array.isArray(args) ? args : []
 

@@ -1,6 +1,7 @@
 import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
 import dedupe from '../util/dedupe'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Commit Unstaged Files]', ...messages)
 
 export interface WorkingKnowledge {
@@ -15,6 +16,7 @@ export interface WorkingKnowledge {
 
 export default async function commitUnstagedFiles (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, branchName, cwd, dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[CommitUnstagedFiles]' })
   // - Commit any unstaged files with the equivalent message "TICK-24 Title of ticket"
 
   const safeTicket = typeof ticket === 'string' ? ticket : ''

@@ -1,4 +1,5 @@
 import exec from '../util/asyncExec'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Branch Name]', ...messages)
 
 export interface WorkingKnowledge {
@@ -10,6 +11,9 @@ export interface WorkingKnowledge {
 }
 
 export default async function findTicketFromBranchName (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
+  const { dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindTicketFromBranchName]' })
+
   let { ticket, ticketTitle, defaultBranchName, cwd } = workingKnowledge
   // - Find branch name using `git rev-parse --abbrev-ref HEAD`, then use that as the ticket reference
 

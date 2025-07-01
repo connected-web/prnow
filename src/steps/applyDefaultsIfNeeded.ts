@@ -1,3 +1,5 @@
+import { reportFactory } from '../util/report'
+
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Apply Defaults if Needed]', ...messages)
 
 export interface WorkingKnowledge {
@@ -9,6 +11,9 @@ export interface WorkingKnowledge {
 }
 
 export default async function applyDefaultsIfNeeded (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
+  const { dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[ApplyDefaultsIfNeeded]' })
+
   let { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
 
   // Apply a default title, and ticket url if not set by this point

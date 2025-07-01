@@ -1,4 +1,5 @@
 import fetch from '../util/asyncFetch'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Jira Ticket]', ...messages)
 
 function tryParse (body: string): Record<string, unknown> {
@@ -21,6 +22,9 @@ export interface WorkingKnowledge {
 }
 
 export default async function findJiraTicket (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
+  const { dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindJiraTicket]' })
+
   let { ticket, branchName, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Find *TICK-24* to see if there is a matching ticket to extract a title for a PR
   if (typeof ticket !== 'string' || ticket === '') {

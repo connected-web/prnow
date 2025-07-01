@@ -1,4 +1,5 @@
 import exec from '../util/asyncExec'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Default Branch]', ...messages)
 
 export interface WorkingKnowledge {
@@ -11,6 +12,8 @@ export interface WorkingKnowledge {
 }
 
 export default async function findDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
+  const { dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindDefaultBranch]' })
   const { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Find the default branch for this repo
 

@@ -1,5 +1,6 @@
 import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
+import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Push to Remote]', ...messages)
 
 export interface WorkingKnowledge {
@@ -14,6 +15,8 @@ export interface WorkingKnowledge {
 
 export default async function pushToRemote (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, branchName, cwd, dryrunEnabled } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[PushToRemote]' })
+
   if (dryrunEnabled === true) {
     report(`${getToken(TOKENS.DRY_RUN)} Would run: git push`)
     report(`${getToken(TOKENS.DRY_RUN)} Would run: git push --set-upstream origin "${typeof branchName === 'string' ? branchName : ''}" (if no upstream branch)`)
