@@ -16,7 +16,7 @@ export default async function fetch ({ url, certFilePath, apiKey, headers }: Fet
     method: 'GET',
     headers: {
       'User-Agent': 'prnow @ github.com:connected-web/prnow',
-      ...((headers != null) || {})
+      ...(headers ?? {})
     }
   }
 
