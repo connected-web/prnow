@@ -13,7 +13,7 @@ export default async function createTitleFromArguments (workingKnowledge: Workin
 
   let ticketTitle: string | undefined
 
-  const words = [ticket].concat(args).join(' ').split(/\s+/)
+  const words = [ticket].concat(args).join(' ').split(/[.\s+]/)
     .filter(n => n)
     .filter(n => n !== '-m')
 

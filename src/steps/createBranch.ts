@@ -26,14 +26,18 @@ async function reusingExistingBranch ({ branchName, report }: { branchName: stri
   report('Reusing existing branch:', branchName)
 }
 
-async function checkoutNewBranch ({ branchName, report, cwd, preview }: { branchName: string, report: Function, cwd: string, preview: boolean }) {
+async function checkoutNewBranch ({ branchName, report, cwd, dryrunEnabled }: { branchName: string, report: Function, cwd: string, dryrunEnabled: boolean }) {
+  if (dryrunEnabled) {
+    report(`[DRY RUN] Would run: git checkout -b "${branchName}"`)
+    return
+  }
   report('Checking out new branch:', branchName)
   const { stdout, stderr } = await exec(`git checkout -b "${branchName}"`, { cwd })
   report('git checkout:', stdout, stderr)
 }
 
 export default async function createBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, cwd, preview } = workingKnowledge
+  const { ticket, ticketTitle, ticketUrl, cwd, dryrunEnabled } = workingKnowledge
   // - Create a branch equivalent to the ticket name
 
   const currentBranchName = (await exec('git branch', { cwd })).stdout.split('\n').filter(n => /\* /.test(n))[0].substr(2)
@@ -55,7 +59,7 @@ export default async function createBranch (workingKnowledge: WorkingKnowledge):
   outcomes.default = checkoutNewBranch
 
   const action = outcomes[currentBranchName] || outcomes.default
-  await action({ branchName, report, cwd, preview })
+  await action({ branchName, report, cwd, dryrunEnabled })
 
   return Object.assign({}, workingKnowledge, {
     ticket,

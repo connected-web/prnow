@@ -3,21 +3,21 @@ import * as index from './src/prnow'
 const report = (...messages: any[]) => console.log('[PR Now] [CLI]', ...messages)
 
 function hasPreviewFlag(args: string[]): boolean {
-  return args.includes('--preview') || args.includes('--dry-run')
+  return args.includes('--dryrunEnabled') || args.includes('--dry-run')
 }
 
 async function run () {
   let [,, command, ...args] = process.argv
   const cwd = process.cwd()
-  const preview = hasPreviewFlag([command, ...args])
-  const filteredArgs = args.filter(arg => arg !== '--preview' && arg !== '--dry-run')
+  const dryrunEnabled = hasPreviewFlag([command, ...args])
+  const filteredArgs = args.filter(arg => arg !== '--dryrunEnabled' && arg !== '--dry-run')
 
   if (command.startsWith('--')) {
     command = ''
   }
 
   try {
-    await index.run({ command, args: filteredArgs, cwd, preview })
+    await index.run({ command, args: filteredArgs, cwd, dryrunEnabled })
   } catch (ex: any) {
     report('Unable to complete;', ex.message, ex)
   }

@@ -7,15 +7,15 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   branchName?: string
   cwd?: string
-  preview?: boolean
+  dryrunEnabled?: boolean
   [key: string]: any
 }
 
 export default async function pushToRemote (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, branchName, cwd, preview } = workingKnowledge
-  if (preview) {
-    report(`[PREVIEW] Would run: git push`)
-    report(`[PREVIEW] Would run: git push --set-upstream origin "${branchName}" (if no upstream branch)`)
+  const { ticket, ticketTitle, ticketUrl, branchName, cwd, dryrunEnabled } = workingKnowledge
+  if (dryrunEnabled) {
+    report(`[DRY RUN] Would run: git push`)
+    report(`[DRY RUN] Would run: git push --set-upstream origin "${branchName}" (if no upstream branch)`)
   } else {
     try {
       const pushToRemote = await exec('git push', { cwd })

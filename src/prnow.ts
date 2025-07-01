@@ -5,22 +5,22 @@ export interface RunOptions {
   command: string
   args: string[]
   cwd: string
-  preview?: boolean
+  dryrunEnabled?: boolean
 }
 
 type InitialWorkingKnowledge = {
   cwd?: string
-  preview?: boolean
+  dryrunEnabled?: boolean
   [key: string]: any
 }
 
-export async function run ({ command, args, cwd, preview }: RunOptions): Promise<void> {
+export async function run ({ command, args, cwd, dryrunEnabled }: RunOptions): Promise<void> {
   const lcCommand = (command + '').toLowerCase()
   const mode = (modes as any)[lcCommand] || (modes as any).default
-  let workingKnowledge: InitialWorkingKnowledge = mode.setup({ command, args, cwd, preview })
+  let workingKnowledge: InitialWorkingKnowledge = mode.setup({ command, args, cwd, dryrunEnabled })
 
-  const previewFlag = preview ? '[PREVIEW]' : ''
-  report(mode.name, previewFlag)
+  const dryrunEnabledFlag = dryrunEnabled ? '[DRY RUN]' : ''
+  report(mode.name, dryrunEnabledFlag)
   for (const [, stepFn] of Object.entries(mode.steps)) {
     if (typeof stepFn === 'function') {
       workingKnowledge = await stepFn(workingKnowledge)

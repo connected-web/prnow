@@ -8,12 +8,12 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   branchName?: string
   cwd?: string
-  preview?: boolean
+  dryrunEnabled?: boolean
   [key: string]: any
 }
 
 export default async function commitUnstagedFiles (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, branchName, cwd, preview } = workingKnowledge
+  const { ticket, ticketTitle, ticketUrl, branchName, cwd, dryrunEnabled } = workingKnowledge
   // - Commit any unstaged files with the equivalent message "TICK-24 Title of ticket"
 
   const message = [
@@ -24,9 +24,9 @@ export default async function commitUnstagedFiles (workingKnowledge: WorkingKnow
     .map(n => n.replace(/["]/g, '\\"'))
     .join('\n')
 
-  if (preview) {
-    report(`[PREVIEW] Would run: git add .`)
-    report(`[PREVIEW] Would run: git commit -m "${message}"`)
+  if (dryrunEnabled) {
+    report(`[DRY RUN] Would run: git add .`)
+    report(`[DRY RUN] Would run: git commit -m "${message}"`)
   } else {
     const gitAdd = await exec('git add .', { cwd })
     report(gitAdd.stdout, gitAdd.stderr)
