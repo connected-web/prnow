@@ -1,4 +1,9 @@
 import steps from '../steps/_index'
+import fs from 'fs'
+import path from 'path'
+
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf-8'))
+const packageVersion = packageJson.version ?? 'u.v.0'
 
 const {
   findDefaultBranch,
@@ -9,7 +14,7 @@ const {
 } = steps
 
 const defaultMode = {
-  name: 'Just Pull Request it Already!',
+  name: `Just Pull Request it Already! [${packageVersion}]`,
   setup: ({ command, args, cwd }: { command: string, args: string[], cwd: string }) => {
     const workingKnowledge = {
       ticket: command,

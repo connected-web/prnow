@@ -13,7 +13,8 @@ export async function run ({ command, args, cwd, preview }: RunOptions): Promise
   const mode = (modes as any)[lcCommand] || (modes as any).default
   let workingKnowledge = mode.setup({ command, args, cwd, preview })
 
-  report(mode.name)
+  const previewFlag = preview ? ' [PREVIEW]' : ''
+  report(mode.name, previewFlag)
   for (const [, stepFn] of Object.entries(mode.steps)) {
     if (typeof stepFn === 'function') {
       workingKnowledge = await stepFn(workingKnowledge)

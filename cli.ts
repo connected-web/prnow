@@ -7,10 +7,14 @@ function hasPreviewFlag(args: string[]): boolean {
 }
 
 async function run () {
-  const [,, command, ...args] = process.argv
+  let [,, command, ...args] = process.argv
   const cwd = process.cwd()
-  const preview = hasPreviewFlag(args)
+  const preview = hasPreviewFlag([command, ...args])
   const filteredArgs = args.filter(arg => arg !== '--preview' && arg !== '--dry-run')
+
+  if (command.startsWith('--')) {
+    command = ''
+  }
 
   try {
     await index.run({ command, args: filteredArgs, cwd, preview })
