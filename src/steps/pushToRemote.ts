@@ -1,6 +1,6 @@
+import { reportFactory } from '../util/report'
 import { getToken, TOKENS } from '../lang/tokens'
 import exec from '../util/asyncExec'
-import { reportFactory } from '../util/report'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Push to Remote]', ...messages)
 
 export interface WorkingKnowledge {
@@ -14,7 +14,7 @@ export interface WorkingKnowledge {
 }
 
 export default async function pushToRemote (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, branchName, cwd, dryrunEnabled } = workingKnowledge
+  const { dryrunEnabled, ticket, ticketTitle, ticketUrl, branchName, cwd } = workingKnowledge
   const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[PushToRemote]' })
 
   if (dryrunEnabled === true) {
@@ -23,15 +23,15 @@ export default async function pushToRemote (workingKnowledge: WorkingKnowledge):
   } else {
     try {
       const pushToRemote = await exec('git push', { cwd })
-      report('git push:', pushToRemote.stdout, pushToRemote.stderr)
+      report(`git push: ${pushToRemote.stdout ?? ''} ${pushToRemote.stderr ?? ''}`)
     } catch (ex: any) {
       if (typeof ex.message === 'string' && /no upstream branch/.test(ex.message)) {
         const pushToUpstream = await exec(`git push --set-upstream origin "${typeof branchName === 'string' ? branchName : ''}"`, { cwd })
-        report('git push:', pushToUpstream.stdout, pushToUpstream.stderr)
+        report(`git push: ${pushToUpstream.stdout ?? ''} ${pushToUpstream.stderr ?? ''}`)
       } else if (typeof ex.message === 'string' && /non-fast-forward/.test(ex.message)) {
         report('Push failed: Your branch is behind its remote counterpart. Please run `git pull --rebase` and try again.')
       } else {
-        report('Push failed:', ex.message)
+        report(`Push failed: ${ex.message ?? ''}`)
       }
     }
   }

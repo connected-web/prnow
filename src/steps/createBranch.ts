@@ -44,7 +44,7 @@ function notEmpty (value: string | undefined): value is string {
 
 export default async function createBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   const { ticket, ticketTitle, ticketUrl, cwd, dryrunEnabled } = workingKnowledge
-  const report = reportFactory({ dryrunEnabled, stepPrefix: '[CreateBranch]' })
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Create branch]' })
   // - Create a branch equivalent to the ticket name
 
   const currentBranchName = (await exec('git branch', { cwd })).stdout.split('\n').filter(n => typeof n === 'string' && n.includes('* '))[0]?.substr(2) ?? ''

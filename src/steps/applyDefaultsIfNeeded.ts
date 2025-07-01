@@ -1,7 +1,5 @@
 import { reportFactory } from '../util/report'
 
-const report = (...messages: unknown[]): void => console.log('[PR Now] [Apply Defaults if Needed]', ...messages)
-
 export interface WorkingKnowledge {
   ticket?: string
   ticketTitle?: string
@@ -11,10 +9,8 @@ export interface WorkingKnowledge {
 }
 
 export default async function applyDefaultsIfNeeded (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { dryrunEnabled } = workingKnowledge
+  const { dryrunEnabled, ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
   const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[ApplyDefaultsIfNeeded]' })
-
-  let { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
 
   // Apply a default title, and ticket url if not set by this point
   if (typeof ticket !== 'string' || ticket === '') {
@@ -23,8 +19,7 @@ export default async function applyDefaultsIfNeeded (workingKnowledge: WorkingKn
 
   if (typeof ticketTitle !== 'string' || ticketTitle === '') {
     ticketTitle = ticket + ' is feature complete'
-    ticketUrl = ''
-    report('Using default ticket title:', ticketTitle)
+    report(`Using default ticket title: ${ticketTitle ?? ''}`)
   }
 
   return Object.assign({}, workingKnowledge, {

@@ -1,5 +1,5 @@
-import fetch from '../util/asyncFetch'
 import { reportFactory } from '../util/report'
+import fetch from '../util/asyncFetch'
 const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Jira Ticket]', ...messages)
 
 function tryParse (body: string): Record<string, unknown> {
@@ -22,10 +22,9 @@ export interface WorkingKnowledge {
 }
 
 export default async function findJiraTicket (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { dryrunEnabled } = workingKnowledge
+  const { dryrunEnabled, ticket, branchName, ticketTitle, ticketUrl, cwd } = workingKnowledge
   const report = reportFactory({ dryrunEnabled: !!dryrunEnabled, stepPrefix: '[FindJiraTicket]' })
 
-  let { ticket, branchName, ticketTitle, ticketUrl, cwd } = workingKnowledge
   // - Find *TICK-24* to see if there is a matching ticket to extract a title for a PR
   if (typeof ticket !== 'string' || ticket === '') {
     throw new Error(`No ticket reference found (${String(ticket)}); prnow needs a reference to create a branch name`)
@@ -36,17 +35,15 @@ export default async function findJiraTicket (workingKnowledge: WorkingKnowledge
   if (typeof PRNOW_JIRA_BASE_URL !== 'string' || PRNOW_JIRA_BASE_URL === '') {
     report('Jira integration skipped: PRNOW_JIRA_BASE_URL or CLIENT_KEY environment variable not set. Set these to enable Jira ticket lookups.')
   } else {
-    const jiraTicketId = ticket.split('/')[0]
-
+    const jiraTicketId = ticket?.split('/')[0] ?? ''
     if (typeof ticketTitle !== 'string' || ticketTitle === '') {
       const certFilePath = PRNOW_JIRA_CLIENT_KEY
       let ticketInfo: Record<string, unknown> | undefined
       if (typeof certFilePath !== 'string' || certFilePath === '') {
-        report('Warning', 'No CLIENT_KEY environment variable set - unable to establish secure connection to Jira')
+        report('Warning: No CLIENT_KEY environment variable set - unable to establish secure connection to Jira')
       } else {
         const rawResponse = await fetch({ url: `${PRNOW_JIRA_BASE_URL}/rest/api/latest/issue/${jiraTicketId}`, certFilePath, apiKey: PRNOW_JIRA_API_KEY })
         const parsedResponse = tryParse(rawResponse)
-
         if (typeof parsedResponse === 'object' && parsedResponse !== null && !('errorMessages' in parsedResponse)) {
           ticketInfo = parsedResponse
           if (typeof ticketInfo === 'object' && ticketInfo !== null && 'fields' in ticketInfo && typeof (ticketInfo as any).fields === 'object' && (ticketInfo as any).fields !== null && 'summary' in (ticketInfo as any).fields) {
