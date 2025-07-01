@@ -30,7 +30,7 @@ export default async function findJiraTicket (workingKnowledge: WorkingKnowledge
   const { PRNOW_JIRA_BASE_URL, PRNOW_JIRA_CLIENT_KEY, PRNOW_JIRA_API_KEY } = process.env
 
   if (typeof PRNOW_JIRA_BASE_URL !== 'string' || PRNOW_JIRA_BASE_URL === '') {
-    // Skipping this check
+    report('Jira integration skipped: PRNOW_JIRA_BASE_URL or CLIENT_KEY environment variable not set. Set these to enable Jira ticket lookups.')
   } else {
     const jiraTicketId = ticket.split('/')[0]
 

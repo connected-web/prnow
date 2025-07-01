@@ -35,8 +35,14 @@ export default async function commitUnstagedFiles (workingKnowledge: WorkingKnow
     const gitAdd = await exec('git add .', { cwd })
     report(gitAdd.stdout, gitAdd.stderr)
     try {
-      const gitCommit = await exec(`git commit -m "${message}"`, { cwd })
-      report(gitCommit.stdout, gitCommit.stderr)
+      // Check if there are staged changes before committing
+      const { stdout: statusStdout } = await exec('git diff --cached --name-only', { cwd })
+      if (!statusStdout || statusStdout.trim() === '') {
+        report('No staged changes to commit.')
+      } else {
+        const gitCommit = await exec(`git commit -m "${message}"`, { cwd })
+        report(gitCommit.stdout, gitCommit.stderr)
+      }
     } catch (ex: any) {
       report('Unable to complete git commmit. Continuing...', ex.message)
     }

@@ -11,6 +11,14 @@ export default async function createTitleFromArguments (workingKnowledge: Workin
   let { ticket, args, cwd } = workingKnowledge
   args = Array.isArray(args) ? args : []
 
+  // If ticket is missing, try to extract from args
+  if (typeof ticket !== 'string' || ticket.trim() === '') {
+    if (args.length > 0 && typeof args[0] === 'string' && args[0].trim() !== '' && !args[0].startsWith('--')) {
+      ticket = args[0]
+      args = args.slice(1)
+    }
+  }
+
   let ticketTitle: string | undefined
 
   // Remove preview/dry-run flags from args before building title
@@ -22,9 +30,10 @@ export default async function createTitleFromArguments (workingKnowledge: Workin
 
   if (words.length === 1) {
     ticket = words[0]
+    ticketTitle = ''
   } else {
     ticket = words[0]
-    ticketTitle = words.join(' ')
+    ticketTitle = words.slice(1).join(' ')
     report('Using:', `"${ticket}"`, 'as the ticket reference, and', `"${ticketTitle}"`, 'as the title')
   }
 

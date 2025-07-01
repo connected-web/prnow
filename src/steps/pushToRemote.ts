@@ -25,6 +25,10 @@ export default async function pushToRemote (workingKnowledge: WorkingKnowledge):
       if (typeof ex.message === 'string' && /no upstream branch/.test(ex.message)) {
         const pushToUpstream = await exec(`git push --set-upstream origin "${typeof branchName === 'string' ? branchName : ''}"`, { cwd })
         report('git push:', pushToUpstream.stdout, pushToUpstream.stderr)
+      } else if (typeof ex.message === 'string' && /non-fast-forward/.test(ex.message)) {
+        report('Push failed: Your branch is behind its remote counterpart. Please run `git pull --rebase` and try again.')
+      } else {
+        report('Push failed:', ex.message)
       }
     }
   }

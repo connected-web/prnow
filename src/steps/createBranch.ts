@@ -48,11 +48,18 @@ export default async function createBranch (workingKnowledge: WorkingKnowledge):
   const currentBranchName = (await exec('git branch', { cwd })).stdout.split('\n').filter(n => typeof n === 'string' && n.includes('* '))[0]?.substr(2) ?? ''
   report('Current Branch Name', currentBranchName)
 
-  const titleSlug = createBranchNameSlug(typeof ticketTitle === 'string' ? ticketTitle : '')
-  const legacyBranchName = [ticket, titleSlug].map(x => typeof x === 'string' ? x : '').join(LEGACY_PATH_SEPARATOR)
-  const extendedBranchName = [ticket, titleSlug].map(x => typeof x === 'string' ? x : '').join(BRANCH_PATH_SEPARATOR)
+  const legacyBranchName = [ticket, ticketTitle].map(x => typeof x === 'string' ? x : '').join(LEGACY_PATH_SEPARATOR)
+  const extendedBranchName = [ticket, ticketTitle].map(x => typeof x === 'string' ? x : '').join(BRANCH_PATH_SEPARATOR)
   // Only add preview/dry-run to branch name if not already present
-  let branchName = typeof ticketTitle === 'string' && ticketTitle !== '' ? extendedBranchName : (typeof ticket === 'string' ? ticket : '')
+  // Avoid duplicating ticket/title in branch name
+  let branchName = typeof ticket === 'string' && ticket.length > 0 ? ticket : ''
+  if (typeof ticketTitle === 'string' && ticketTitle.length > 0) {
+    const titleSlug = createBranchNameSlug(ticketTitle)
+    // Only add titleSlug if not already in branchName
+    if (!branchName.includes(titleSlug)) {
+      branchName = [branchName, titleSlug].filter(Boolean).join(BRANCH_PATH_SEPARATOR)
+    }
+  }
   if (typeof branchName === 'string' && branchName !== '' && typeof dryrunEnabled === 'boolean' && dryrunEnabled && (branchName.endsWith('--preview') || branchName.endsWith('--dry-run'))) {
     // Remove accidental preview/dry-run suffix
     branchName = branchName.replace(/(--preview|--dry-run)$/, '')
