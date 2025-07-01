@@ -15,11 +15,12 @@ const {
 
 const defaultMode = {
   name: `Just Pull Request it Already! [${packageVersion}]`,
-  setup: ({ command, args, cwd }: { command: string, args: string[], cwd: string }) => {
+  setup: ({ command, args, cwd, dryrunEnabled }: { command: string, args: string[], cwd: string, dryrunEnabled?: boolean }) => {
     const workingKnowledge = {
       ticket: command,
       args,
-      cwd
+      cwd,
+      dryrunEnabled
     }
     return workingKnowledge
   },
