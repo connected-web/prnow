@@ -14,7 +14,7 @@ export function reportFactory (options: ReportOptions = {}) {
   return function report (...messages: unknown[]): void {
     const dryrunPrefix = options.dryrunEnabled === true ? '[💦]' : ''
     const prnowPrefix = '[PR Now]'
-    const reportLine = [prnowPrefix, dryrunPrefix, options.stepPrefix].filter(Boolean).join(' ')
+    const reportLine = [dryrunPrefix, prnowPrefix, options.stepPrefix].filter(Boolean).join(' ')
     console.log(reportLine, ...messages)
   }
 }
