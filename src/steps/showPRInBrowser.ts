@@ -15,12 +15,20 @@ export default async function showPRInBrowser (workingKnowledge: WorkingKnowledg
   const report = reportFactory({ dryrunEnabled, stepPrefix: '[Show PR in browser]' })
   // Use `gh` to open a browser with the new PR so you can review and share with friends
 
-  const ghShowCmd = 'gh pr view --web'
+  const ghShowCmd = 'gh pr view'
+  const ghShowWebCmd = 'gh pr view --web'
   if (dryrunEnabled === true) {
-    report(`Would run: ${ghShowCmd}`)
+    report(`Would run: ${ghShowWebCmd}`)
   } else {
+    // First, check if a PR exists for this branch
     const ghShowPR = await exec(ghShowCmd, { cwd })
-    report(`gh: ${typeof ghShowPR.stdout === 'string' ? ghShowPR.stdout : ''} ${typeof ghShowPR.stderr === 'string' ? ghShowPR.stderr : ''}`)
+    if (ghShowPR.code === 0) {
+      // PR exists, open in browser
+      await exec(ghShowWebCmd, { cwd })
+      report('Opened PR in browser.')
+    } else {
+      report('No pull request found for this branch. Please create a PR first.')
+    }
   }
 
   return Object.assign({}, workingKnowledge, {
