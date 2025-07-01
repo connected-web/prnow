@@ -4,6 +4,7 @@ import exec from '../util/asyncExec'
 export interface WorkingKnowledge {
   cwd?: string
   defaultBranchName?: string
+  dryrunEnabled?: boolean
   [key: string]: unknown
 }
 
