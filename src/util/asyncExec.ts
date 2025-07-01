@@ -10,7 +10,7 @@ export default async function exec (command: string, options?: Record<string, un
   return await new Promise((resolve) => {
     execCb(command, options, (error, stdout, stderr) => {
       resolve({
-        code: error && typeof error.code === 'number' ? error.code : 0,
+        code: (error != null) && typeof error.code === 'number' ? error.code : 0,
         stdout: typeof stdout === 'string' ? stdout.toString().trim() : '',
         stderr: typeof stderr === 'string' ? stderr.toString().trim() : ''
       })
