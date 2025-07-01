@@ -5,16 +5,18 @@ interface FetchOptions {
   url: string
   certFilePath?: string
   apiKey?: string
+  headers?: Record<string, string>
 }
 
-export default async function fetch ({ url, certFilePath, apiKey }: FetchOptions): Promise<string> {
+export default async function fetch ({ url, certFilePath, apiKey, headers }: FetchOptions): Promise<string> {
   const urlopts = new URL(url)
   let options: any = {
     hostname: urlopts.hostname,
-    path: urlopts.pathname,
+    path: urlopts.pathname + urlopts.search,
     method: 'GET',
     headers: {
-      'User-Agent': 'prnow @ github.com:connected-web/prnow'
+      'User-Agent': 'prnow @ github.com:connected-web/prnow',
+      ...(headers || {})
     }
   }
 

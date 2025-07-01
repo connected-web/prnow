@@ -6,6 +6,7 @@ export interface WorkingKnowledge {
   ticketTitle?: string
   defaultBranchName?: string
   cwd?: string
+  dryrunEnabled?: boolean
   [key: string]: unknown
 }
 
@@ -17,7 +18,10 @@ export default async function findTicketFromBranchName (workingKnowledge: Workin
   const { stdout, stderr } = await exec('git rev-parse --abbrev-ref HEAD', { cwd })
   report(`Asked git for the current branch name: ${stdout ?? ''} ${stderr ?? ''}`)
   const branchName = (typeof stderr === 'string' && stderr.length === 0) ? stdout : false
-  const possibleTicket = typeof branchName === 'string' && branchName.length > 0 ? branchName.split('/')[0] : undefined
+
+  // Extract ticket ID from branch name using regex (e.g., WORKOP-15)
+  const ticketIdMatch = typeof branchName === 'string' ? branchName.match(/[A-Z]+-\d+/i) : null
+  const possibleTicket = (ticketIdMatch != null) ? ticketIdMatch[0] : undefined
 
   if (typeof branchName === 'string' && branchName === defaultBranchName) {
     if (typeof ticket === 'string' && ticket.length > 0) {
