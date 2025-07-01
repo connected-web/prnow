@@ -1,6 +1,6 @@
 import exec from '../util/asyncExec'
 import dedupe from '../util/dedupe'
-const report = (...messages: any[]) => console.log('[PR Now] [Create a Github PR]', ...messages)
+import { reportFactory } from '../util/report'
 
 export interface WorkingKnowledge {
   ticket?: string
@@ -8,30 +8,31 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   cwd?: string
   defaultBranchName?: string
-  preview?: boolean
-  [key: string]: any
+  dryrunEnabled?: boolean
+  [key: string]: unknown
 }
 
 export default async function createAGithubPR (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, cwd, defaultBranchName, preview } = workingKnowledge
-  // - Use `hub` to create a PR in github with a title, and a link to the ticket in the description
+  const { cwd, defaultBranchName, dryrunEnabled } = workingKnowledge
+  const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
+  const ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
+  const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Create a GitHub PR]' })
+  // Use `gh` to create a PR in github with a title, and a link to the ticket in the description
 
-  const messages = [
-    dedupe(`${ticket} ${ticketTitle}`),
-    ticketUrl ? `See: ${ticketUrl}` : 'There is no ticket for this work.'
-  ]
-    .filter(n => n)
-    .map(n => n.replace(/["]/g, '\\"'))
-    .map(m => `-m "${m}"`).join(' ')
+  const title = dedupe(`${ticket} ${ticketTitle}`)
+  const body = ticketUrl !== '' ? `See: ${ticketUrl}` : 'There is no ticket for this work.'
+  const baseBranch = typeof defaultBranchName === 'string' ? defaultBranchName : ''
+  const ghCmd = `gh pr create --base ${baseBranch} --title "${title}" --body "${body}" --web --fill`
 
-  if (preview) {
-    report(`[PREVIEW] Would run: hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`)
+  if (dryrunEnabled === true) {
+    report(`Would run: ${ghCmd}`)
   } else {
     try {
-      const draftHubPR = await exec(`hub pull-request -b ${defaultBranchName} -f --browse --no-edit ${messages}`, { cwd })
-      report('Hub:', draftHubPR.stdout, draftHubPR.stderr)
+      const draftGhPR = await exec(ghCmd, { cwd })
+      report('gh:', typeof draftGhPR.stdout === 'string' ? draftGhPR.stdout : '', typeof draftGhPR.stderr === 'string' ? draftGhPR.stderr : '')
     } catch (ex: any) {
-      if (/A pull request already exists/.test(ex.message)) {
+      if (typeof ex.message === 'string' && /A pull request already exists/.test(ex.message)) {
         report(ex.message)
       } else {
         throw ex
@@ -41,6 +42,10 @@ export default async function createAGithubPR (workingKnowledge: WorkingKnowledg
 
   return Object.assign({}, workingKnowledge, {
     ticket,
-    cwd
+    ticketTitle,
+    ticketUrl,
+    cwd,
+    defaultBranchName,
+    dryrunEnabled
   })
 }

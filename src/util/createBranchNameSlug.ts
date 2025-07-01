@@ -1,4 +1,4 @@
-export default function createBranchNameSlug(title: string): string {
+export default function createBranchNameSlug (title: string): string {
   return title.toLowerCase()
     .replace(/[.']/g, '')
     .replace(/[^a-z\d-]/g, ' ')

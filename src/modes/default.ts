@@ -1,4 +1,9 @@
 import steps from '../steps/_index'
+import fs from 'fs'
+import path from 'path'
+
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf-8'))
+const packageVersion: string = packageJson.version ?? 'u.v.0'
 
 const {
   findDefaultBranch,
@@ -9,12 +14,13 @@ const {
 } = steps
 
 const defaultMode = {
-  name: 'Just Pull Request it Already!',
-  setup: ({ command, args, cwd }: { command: string, args: string[], cwd: string }) => {
+  name: `Just Pull Request it Already! [${String(packageVersion)}]`,
+  setup: ({ command, args, cwd, dryrunEnabled }: { command: string, args: string[], cwd: string, dryrunEnabled?: boolean }): Record<string, unknown> => {
     const workingKnowledge = {
       ticket: command,
       args,
-      cwd
+      cwd,
+      dryrunEnabled
     }
     return workingKnowledge
   },

@@ -1,32 +1,46 @@
-const report = (...messages: any[]) => console.log('[PR Now] [Create Title from Arguments]', ...messages)
+import { reportFactory } from '../util/report'
 
 export interface WorkingKnowledge {
   ticket?: string
   args?: string[]
   cwd?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default async function createTitleFromArguments (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
   let { ticket, args, cwd } = workingKnowledge
-  args = args || []
+  args = Array.isArray(args) ? args : []
+
+  // Only extract ticket from args if ticket is not already set and valid
+  let ticketFromArgs: string | undefined
+  if (typeof ticket !== 'string' || ticket.trim() === '') {
+    if (args.length > 0 && typeof args[0] === 'string' && args[0].trim() !== '' && !args[0].startsWith('--')) {
+      ticketFromArgs = args[0]
+      args = args.slice(1)
+    }
+  }
+  // Use the ticket from workingKnowledge if present, otherwise from args
+  const finalTicket = (typeof ticket === 'string' && ticket.trim() !== '') ? ticket : ticketFromArgs
 
   let ticketTitle: string | undefined
 
-  const words = [ticket].concat(args).join(' ').split(/\s+/)
-    .filter(n => n)
+  // Remove preview/dry-run flags from args before building title
+  const filteredArgs = args.filter(arg => arg !== '--preview' && arg !== '--dry-run')
+
+  const words = [finalTicket].concat(filteredArgs).join(' ').split(/[.\s+]/)
+    .filter(n => typeof n === 'string' && n.length > 0)
     .filter(n => n !== '-m')
 
   if (words.length === 1) {
-    ticket = words[0]
+    ticketTitle = ''
   } else {
-    ticket = words[0]
-    ticketTitle = words.join(' ')
-    report('Using:', `"${ticket}"`, 'as the ticket reference, and', `"${ticketTitle}"`, 'as the title')
+    ticketTitle = words.slice(1).join(' ')
+    const report = reportFactory({ stepPrefix: '[CreateTitleFromArguments]' })
+    report(`Using: "${words[0] ?? ''}" as the ticket reference, and "${ticketTitle ?? ''}" as the title`)
   }
 
   return Object.assign({}, workingKnowledge, {
-    ticket,
+    ticket: words[0],
     ticketTitle,
     cwd
   })

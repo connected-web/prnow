@@ -13,13 +13,13 @@ PR Now is a command line tool that automates a streamlined workflow for making p
 ## Prereqsuites
 
 - `node js > 22` installed : https://nodejs.org/en/
-- `hub > 2.25.x` installed : https://hub.github.com/
+- `gh > 2.x` installed : https://cli.github.com/
 - `git > 2` installed : https://git-scm.com/downloads
 - A project checked out from `github` : https://github.com/
 
 ## Environment Variables
 
-- `GITHUB_TOKEN` set on your environment to a developer key for `hub` to talk to `github`
+- `GITHUB_TOKEN` set on your environment to a developer key for `gh` to talk to `github`
 
 ### Optional
 
@@ -37,8 +37,8 @@ PR Now will attempt to:
 - Create and checkout a branch based on the ticket ID
 - Commit any unstaged files with the equivalent message "TICKET-24 Title of ticket"
 - Push any changes to the remote branch; creating the remote branch if necessary
-- Use `hub` to create a PR in github with a title, and a link to the ticket in the description
-- Use `hub` to open a browser with the new PR so you can review and share with friends
+- Use `gh` to create a PR in github with a title, and a link to the ticket in the description
+- Use `gh` to open a browser with the new PR so you can review and share with friends
 
 That's a lot of things! Think through how you would normally create a Pull Request - write down all the steps.
 

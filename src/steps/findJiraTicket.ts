@@ -1,9 +1,9 @@
+import { reportFactory } from '../util/report'
 import fetch from '../util/asyncFetch'
-import createBranchNameSlug from '../util/createBranchNameSlug'
-const report = (...messages: any[]) => console.log('[PR Now] [Find Jira Ticket]', ...messages)
+const report = (...messages: unknown[]): void => console.log('[PR Now] [Find Jira ticket]', ...messages)
 
-function tryParse (body: string): any {
-  let result = {}
+function tryParse (body: string): Record<string, unknown> {
+  let result: Record<string, unknown> = {}
   try {
     result = JSON.parse(body)
   } catch (ex: any) {
@@ -18,35 +18,53 @@ export interface WorkingKnowledge {
   ticketTitle?: string
   ticketUrl?: string
   cwd?: string
-  [key: string]: any
+  dryrunEnabled?: boolean
+  [key: string]: unknown
 }
 
 export default async function findJiraTicket (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  let { ticket, branchName, ticketTitle, ticketUrl, cwd } = workingKnowledge
-  // - Find *TICK-24* to see if there is a matching ticket to extract a title for a PR
-  if (!ticket) {
-    throw new Error(`No ticket reference found (${ticket}); prnow needs a reference to create a branch name`)
+  const { dryrunEnabled, branchName, cwd } = workingKnowledge
+  const ticket = typeof workingKnowledge.ticket === 'string' ? workingKnowledge.ticket : ''
+  let ticketTitle = typeof workingKnowledge.ticketTitle === 'string' ? workingKnowledge.ticketTitle : ''
+  const ticketUrl = typeof workingKnowledge.ticketUrl === 'string' ? workingKnowledge.ticketUrl : ''
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Find Jira ticket]' })
+
+  if (typeof ticket !== 'string' || ticket === undefined || ticket === '') {
+    throw new Error(`No ticket reference found (${String(workingKnowledge.ticket)}); prnow needs a reference to create a branch name`)
   }
 
-  const { PRNOW_JIRA_BASE_URL, PRNOW_JIRA_CLIENT_KEY, PRNOW_JIRA_API_KEY } = process.env
+  const { PRNOW_JIRA_BASE_URL, PRNOW_JIRA_EMAIL, PRNOW_JIRA_API_KEY } = process.env
 
-  if (!PRNOW_JIRA_BASE_URL) {
-    // Skipping this check
+  if (typeof PRNOW_JIRA_BASE_URL !== 'string' || PRNOW_JIRA_BASE_URL === '') {
+    report('Jira integration skipped: PRNOW_JIRA_BASE_URL or PRNOW_JIRA_EMAIL environment variable not set. Set these to enable Jira ticket lookups.')
   } else {
-    const jiraTicketId = ticket.split('/')[0]
-
-    if (!ticketTitle) {
-      const certFilePath = PRNOW_JIRA_CLIENT_KEY
-      let ticketInfo
-      if (!certFilePath && !PRNOW_JIRA_API_KEY) {
-        report('Warning', 'No CLIENT_KEY environment variable set - unable to establish secure connection to Jira')
+    const jiraTicketId = ticket.split('/')[0] ?? ''
+    if (ticketTitle === '') {
+      const email = PRNOW_JIRA_EMAIL
+      const apiKey = PRNOW_JIRA_API_KEY
+      let ticketInfo: Record<string, unknown> | undefined
+      if (typeof email !== 'string' || email === '' || typeof apiKey !== 'string' || apiKey === '') {
+        report('Warning: PRNOW_JIRA_EMAIL or PRNOW_JIRA_API_KEY environment variable not set - unable to authenticate to Jira')
       } else {
-        const rawResponse = await fetch({ url: `${PRNOW_JIRA_BASE_URL}/rest/api/latest/issue/${jiraTicketId}`, certFilePath, apiKey: PRNOW_JIRA_API_KEY })
+        const requestUrl = `${PRNOW_JIRA_BASE_URL}/rest/api/latest/issue/${jiraTicketId}`
+        report(`Looking up Jira ticket ${jiraTicketId}...`)
+        const rawResponse = await fetch({
+          url: requestUrl,
+          headers: {
+            Authorization: 'Basic ' + Buffer.from(`${email}:${apiKey}`).toString('base64')
+          }
+        })
         const parsedResponse = tryParse(rawResponse)
-
-        if (!parsedResponse.errorMessages) {
+        if (typeof parsedResponse === 'object' && parsedResponse !== null && !('errorMessages' in parsedResponse)) {
           ticketInfo = parsedResponse
-          ticketTitle = ticketInfo.fields.summary
+          if (typeof ticketInfo === 'object' && ticketInfo !== null && 'fields' in ticketInfo && typeof (ticketInfo as any).fields === 'object' && (ticketInfo as any).fields !== null && 'summary' in (ticketInfo as any).fields) {
+            ticketTitle = String((ticketInfo as any).fields.summary)
+            report(`Jira ticket found: ${ticketTitle}`)
+          } else {
+            report('Jira ticket found, but summary/title is missing')
+          }
+        } else {
+          report('Jira ticket not found or access denied')
         }
       }
     }

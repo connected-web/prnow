@@ -1,5 +1,5 @@
+import { reportFactory } from '../util/report'
 import exec from '../util/asyncExec'
-const report = (...messages: any[]) => console.log('[PR Now] [Find Default Branch]', ...messages)
 
 export interface WorkingKnowledge {
   ticket?: string
@@ -7,21 +7,26 @@ export interface WorkingKnowledge {
   ticketUrl?: string
   cwd?: string
   defaultBranchName?: string
-  [key: string]: any
+  dryrunEnabled?: boolean
+  [key: string]: unknown
 }
 
 export default async function findDefaultBranch (workingKnowledge: WorkingKnowledge): Promise<WorkingKnowledge> {
-  const { ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
+  const { dryrunEnabled, ticket, ticketTitle, ticketUrl, cwd } = workingKnowledge
+  const report = reportFactory({ dryrunEnabled, stepPrefix: '[Find default branch]' })
   // - Find the default branch for this repo
 
   let defaultBranchName = 'main'
 
   try {
     const originInformation = (await exec('git remote show origin', { cwd })).stdout
-    defaultBranchName = originInformation.split('\n').filter(n => n.includes('HEAD branch'))[0].trim().split(':')[1].trim()
-    report('Found:', defaultBranchName)
+    const headLine = originInformation.split('\n').find(n => typeof n === 'string' && String(n).includes('HEAD branch'))
+    if (typeof headLine === 'string') {
+      defaultBranchName = headLine.trim().split(':')[1]?.trim() ?? 'main'
+      report(`Found: ${String(defaultBranchName)}`)
+    }
   } catch (ex: any) {
-    report('Unable to discern default branch name from origin:', ex.message)
+    report(`Unable to discern default branch name from origin: ${String(ex.message)}`)
   }
 
   return Object.assign({}, workingKnowledge, {
